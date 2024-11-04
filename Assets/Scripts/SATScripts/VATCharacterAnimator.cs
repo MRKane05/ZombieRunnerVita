@@ -44,7 +44,7 @@ public class VATCharacterAnimator : MonoBehaviour {
 	//Our internal tickers for animating
 	float targetFrame = 0;
 	float blendTargetFrame = 0;
-	float targetFramerate = 30f;
+	public float targetFramerate = 25f;
 	
 	public Vector2 animBounds;	//Set as a reference when the animation is created, and we use this to set our material
 
@@ -52,6 +52,9 @@ public class VATCharacterAnimator : MonoBehaviour {
     {
 		//Setup our object to be driven by an animated vertex shader
 		objectRenderer = AnimatedObject.GetComponent<MeshRenderer>();
+		MeshFilter meshFilter = AnimatedObject.GetComponent<MeshFilter>();
+		meshFilter.mesh.bounds = new Bounds(Vector3.zero, Vector3.one * 3f);
+		
 		VATMaterial = Instantiate(objectRenderer.sharedMaterial) as Material;
 		if (VATMaterial)
         {

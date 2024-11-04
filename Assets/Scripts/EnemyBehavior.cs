@@ -12,9 +12,10 @@ public class EnemyBehavior : MonoBehaviour {
 	[HideInInspector]
 	public bool bHasStruckPlayer = false;
 
-	public float dash_radius = 7f;	//At what point do we speed up?
+	public float dash_radius = 7f;  //At what point do we speed up?
 
-	public float attention_radius = 15f; //If our player is outside of this range we just do Zombie stuff
+	public Range attentionRange = new Range(7f, 15f);
+	float attention_radius = 15f; //If our player is outside of this range we just do Zombie stuff
 	public VATCharacterAnimator targetCharacter;
 
 
@@ -30,6 +31,7 @@ public class EnemyBehavior : MonoBehaviour {
 	void Start() {
 		characterController = gameObject.GetComponent<CharacterController>();
 		startPosition = gameObject.transform.position;
+		attention_radius = attentionRange.GetRandom();
 		PickZombieStartingState();
 	}
 
@@ -84,15 +86,21 @@ public class EnemyBehavior : MonoBehaviour {
 	void PickZombieStartingState()
     {
 		float randState = Random.value;
-		if (randState > 0.6f)
+		if (randState > 0.75f)
         {
-			setCurrentAnimation("ZombieIdleAlert");
+			setCurrentAnimation("Zombie_Scream");
         }
-        else
+        else if (randState > 0.5f)
         {
-			//Lets have this zombie doing something - like eating something on the ground
 			setCurrentAnimation("Zombie_Biting");
         }
+		else if (randState > 0.25f)
+        {
+			setCurrentAnimation("ZombieAgonizing");
+        } else
+        {
+			setCurrentAnimation("ZombieIdleAlert");
+		}
     }
 
 	void PickZombieMoveState()
@@ -101,7 +109,13 @@ public class EnemyBehavior : MonoBehaviour {
 		if (rndState > 0.3f)
         {
 			speed_move = speed_amble;
-			setCurrentAnimation("ZombieRun");
+			if (Random.value > 0.5f)
+			{
+				setCurrentAnimation("ZombieRun");
+			} else
+            {
+				setCurrentAnimation("ZombieRunB");
+			}
 		} else
         {
 			speed_move = speed_walk;
@@ -114,6 +128,7 @@ public class EnemyBehavior : MonoBehaviour {
 		gameObject.transform.eulerAngles = new Vector3(0, Random.Range(0f, 360f), 0);
 		bHasStruckPlayer = false;
 		bZombieWaiting = true;
+		attention_radius = attentionRange.GetRandom();
 		PickZombieStartingState();
 	}
 

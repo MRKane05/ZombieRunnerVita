@@ -14,6 +14,8 @@ public class VATTool : EditorWindow
     private VATCharacterAnimator vatCharacterAnimator;
     private float minSamplingRate = 60.0f;
     private bool powerOfTwo = true;
+    private bool useUV2 = true;
+    private float inTextureHeight = 512;
 
     private bool hasResults = false;
     private Texture2D results_texture;
@@ -35,6 +37,8 @@ public class VATTool : EditorWindow
         EditorGUILayout.Space();
         minSamplingRate = EditorGUILayout.FloatField("Sampling rate (per sec.)", minSamplingRate);
         powerOfTwo = EditorGUILayout.Toggle("Power of two", powerOfTwo);
+        useUV2 = EditorGUILayout.Toggle("Use imported UV2s", useUV2);
+        inTextureHeight = EditorGUILayout.FloatField("TexHeight (if > 0)", inTextureHeight);
 
         GUI.enabled =
             animatedGameObject
@@ -94,6 +98,9 @@ public class VATTool : EditorWindow
         int textureHeight = defaultVertexPositions.Length;
         if (powerOfTwo)
             textureHeight = GetNearestPowerOfTwo(textureHeight);
+        if (inTextureHeight > 0) { 
+            textureHeight = (int)inTextureHeight;
+        }
 
         if (textureHeight > MAX_TEXTURE_SIZE)
         {
@@ -162,6 +169,7 @@ public class VATTool : EditorWindow
         {
             vatCharacterAnimator.animBounds = bounds;
         }
+        vatCharacterAnimator.targetFramerate = minSamplingRate;
         vatAnimGenerator.bounds = bounds;
 
         Undo.PerformUndo(); //reset the animated pose, i hate this
@@ -170,9 +178,11 @@ public class VATTool : EditorWindow
                                           textureHeight,
                                           TextureFormat.RGBA32,
                                           false);
-        
 
-        
+
+        List<Vector2> uvs2 = new List<Vector2>();
+        bakedMesh.GetUVs(1, uvs2);
+
         for (int x = 0; x < frameCount; x++)
         {
             for (int y = 0; y < frames[x].Length; y++)
@@ -182,8 +192,13 @@ public class VATTool : EditorWindow
                    Mathf.InverseLerp(bounds.x, bounds.y, frames[x][y].y),
                    Mathf.InverseLerp(bounds.x, bounds.y, frames[x][y].z)
                    );
-
-                texture.SetPixel(x, y, col);
+                //pixel y is our index
+                int pixelY = y;
+                if (useUV2)
+                {
+                    pixelY = Mathf.FloorToInt(uvs2[y].y * textureHeight);   //Pull the pixel position out of our UV and convert to an index
+                }
+                texture.SetPixel(x, pixelY, col);
             }
         }
 
@@ -204,7 +219,12 @@ public class VATTool : EditorWindow
                    Mathf.InverseLerp(-1f, 1f, normalFrames[x][y].z)
                    );
 
-                normalTexture.SetPixel(x, y, col);
+                int pixelY = y;
+                if (useUV2)
+                {
+                    pixelY = Mathf.FloorToInt(uvs2[y].y * textureHeight);   //Pull the pixel position out of our UV and convert to an index
+                }
+                normalTexture.SetPixel(x, pixelY, col);
             }
         }
 
