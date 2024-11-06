@@ -5,6 +5,7 @@ using UnityEngine.Animations;
 using System.Collections.Generic;
 using System.Linq;
 
+//A quick tool for assigning mesh UV2 based off of vertex index. This can be reset by the editor reimporting the mesh however - Kano
 public class VAT_UVSet : EditorWindow {
     private const int MAX_TEXTURE_SIZE = 4096;
 

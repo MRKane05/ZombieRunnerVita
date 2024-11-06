@@ -20,21 +20,26 @@ public class VATAnim
 //Just a simple class to handle different animations
 public class VATCharacterAnimator : MonoBehaviour {
 	[Header("Vertex Animation Lists")]
+	[Tooltip("List of animations with frame keys")]
 	public List<VATAnim> VATAnims = new List<VATAnim>();
 	[Space]
+	[Tooltip("The Mesh we will Animate")]
 	public GameObject AnimatedObject;   //The object that we'll be "driving
 	MeshRenderer objectRenderer;
 	[Space]
 	[Header("Animation Details")]
+	[Tooltip("Material that's used for the VAT process. Will be assigned as a clone to the Animated Mesh")]
 	public Material VATMaterial; //What material we'll be "driving"
-
+	[Space]
+	[Header("VAT Textures")]
 	public Texture2D vertexAnimationTexture; //Set as a reference when the animation is created, and we use this to set our material
 	public Texture2D normalsAnimationTexture; //Set as a reference when the animation is created, and we use this to set our material
 
 	VATAnim currentVATAnimation;	//Which animation are we playing presently?
 	VATAnim blendVATAnimation;   //Used for blending frame sequences
-
+	[Tooltip("VAT Shader for handling Blends")]
 	public Shader noBlendShader;
+	[Tooltip("Standard VAT Shader")]
 	public Shader BlendShader;
 
 	float blendDuration = 0.5f;
@@ -44,8 +49,9 @@ public class VATCharacterAnimator : MonoBehaviour {
 	//Our internal tickers for animating
 	float targetFrame = 0;
 	float blendTargetFrame = 0;
+	[Tooltip("Target Framerate. This should be set by the VATTool")]
 	public float targetFramerate = 25f;
-	
+	[Tooltip("Bounds for this animation. This should be set by the VATTool")]
 	public Vector2 animBounds;	//Set as a reference when the animation is created, and we use this to set our material
 
 	void Awake()

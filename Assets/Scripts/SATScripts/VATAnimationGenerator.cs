@@ -15,7 +15,9 @@ public class SATAnimation
 //So the theory is to put this on a character and our VAT tool will grab the necessary animations off of this
 //We'll also do our calculations and populate another script which can be used to drive the animator
 public class VATAnimationGenerator : MonoBehaviour {
+	[Tooltip("Add your animations here as clips. The system will create indexes and complete the population process from what you've listed here")]
 	public List<SATAnimation> SATAnimations = new List<SATAnimation>();
+	[Tooltip("This will be set by the VATTool")]
 	public Vector2 bounds;
 
 

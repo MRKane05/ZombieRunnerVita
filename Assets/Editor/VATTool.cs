@@ -3,6 +3,10 @@ using UnityEngine;
 using UnityEditor;
 using System.IO;
 
+//A tool to create vertex animation textures based off of:
+//https://github.com/sandwichpuissant/Unity-VAT
+//I have expanded it and refined it to work with two scripts for running animations and setup - Kano
+
 public class VATTool : EditorWindow
 {
     private const int MAX_TEXTURE_SIZE = 4096;
@@ -15,7 +19,7 @@ public class VATTool : EditorWindow
     private float minSamplingRate = 60.0f;
     private bool powerOfTwo = true;
     private bool useUV2 = true;
-    private float inTextureHeight = 512;
+    private float inTextureHeight = -1;
 
     private bool hasResults = false;
     private Texture2D results_texture;
@@ -32,8 +36,13 @@ public class VATTool : EditorWindow
 
     private void OnGUI()
     {
-        animatedGameObject = (GameObject)EditorGUILayout.ObjectField("Animated GameObject", animatedGameObject, typeof(GameObject), true);
-        vatCharacterAnimator = (VATCharacterAnimator)EditorGUILayout.ObjectField("VAT Character Animator", vatCharacterAnimator, typeof(VATCharacterAnimator), true);
+        //animatedGameObject = (GameObject)EditorGUILayout.ObjectField("Animated GameObject", animatedGameObject, typeof(GameObject), true);
+        
+        GUIContent content = new GUIContent("Animated GameObject", "This is the skeletal animated object used to generate the animtions, with a VATCharacterAnimator script attached to drive the process");
+        animatedGameObject = (GameObject)EditorGUILayout.ObjectField(content, animatedGameObject, typeof(GameObject), true);
+        
+        content = new GUIContent("VAT Character Animator", "The object that is to have the animations applied to it. This should be a VATCharacterAnimator script with the skeletal mesh removed and replaced with a MeshFilter and MeshRenderer");
+        vatCharacterAnimator = (VATCharacterAnimator)EditorGUILayout.ObjectField(content, vatCharacterAnimator, typeof(VATCharacterAnimator), true);
         EditorGUILayout.Space();
         minSamplingRate = EditorGUILayout.FloatField("Sampling rate (per sec.)", minSamplingRate);
         powerOfTwo = EditorGUILayout.Toggle("Power of two", powerOfTwo);
