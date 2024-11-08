@@ -326,7 +326,7 @@ public class PC_FPSController : MonoBehaviour
         Vector3 right = Quaternion.AngleAxis(90f, Vector3.up)*forward; 
 
         bool addEffort = bAddEffort();
-        boostTime -= Time.deltaTime;    //PROBLEM: This needs refactoring - Tick our boost speed down
+        
         dodgeTime -= Time.deltaTime;    //Tick down our dodge
         float calcMoveSpeed = boostTime > 0 ? boostSpeed : runningSpeed;    //Take into account our boost but still allow for slowing our player
         
@@ -356,6 +356,8 @@ public class PC_FPSController : MonoBehaviour
         
         if (bIsGrounded())
         {
+            //So that we don't "unboost" in mid air lets put the logic for this here
+            boostTime -= Time.deltaTime;
             //Handle our runspeed details. This'll also have to affect our actual movement speed
             if (groundObject && groundObject.GetComponent<Terrain>() != null) //Because this is square distance. Essentially we're trying to see when we're in the grass
             {
@@ -455,8 +457,15 @@ public class PC_FPSController : MonoBehaviour
 
     void OnControllerColliderHit(ControllerColliderHit hit)
     {
-        if (hit.normal.y > 0.9f)    //Change if we want incline
+        if (hit.normal.y > 0.9f)   //Change if we want incline
+        {
+            //What we want to be is NOT standing on top of an enemy, so lets stun and knock the enemy out of the way if the player does this (instant dissolve)
+            if (hit.collider.gameObject.GetComponent<EnemyBehavior>())
+            {
+                hit.collider.gameObject.GetComponent<EnemyBehavior>().ReDropEnemy();    //PROBLEM: I'm 100% sure that simply nulling an enemy when the player drops on it will have unintended consequences
+            }
             groundObject = hit.collider.gameObject;
+        }
     }
 
     public bool bIsGrounded()
