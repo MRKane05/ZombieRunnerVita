@@ -6,6 +6,12 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
+    path: Assets/Menus/Scenes/Menu_Main.unity
+    guid: 59f5f526035b80740a4c895e01f82a59
+  - enabled: 1
+    path: Assets/Menus/Scenes/Menu_Options.unity
+    guid: 950c30fa611642a4f9a090939a5a724a
+  - enabled: 1
     path: Assets/Scenes/RoadSetup_Terrain_HeadOriented_VehicleDrop.unity
     guid: 6b551dc75a3b6424d8eed0b164032308
   m_configObjects: {}

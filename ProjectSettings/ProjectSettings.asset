@@ -573,7 +573,19 @@ PlayerSettings:
   webGLUseEmbeddedResources: 0
   webGLCompressionFormat: 1
   webGLLinkerTarget: 1
-  scriptingDefineSymbols: {}
+  scriptingDefineSymbols:
+    1: DOTWEEN
+    4: DOTWEEN
+    7: DOTWEEN
+    13: DOTWEEN
+    14: DOTWEEN
+    18: DOTWEEN
+    19: DOTWEEN
+    21: DOTWEEN
+    23: DOTWEEN
+    25: DOTWEEN
+    26: DOTWEEN
+    27: DOTWEEN
   platformArchitecture: {}
   scriptingBackend:
     PSP2: 1
