@@ -17,7 +17,8 @@ public class DamageIndicatorHandler : MonoBehaviour {
 	}
 
 	//PROBLEM: This display is wholey substandard, but suitable for the moment
-	public void TakeDamage(bool bRight) {
+	public void TakeDamage(Vector3 DamageDirection) {
+		bool bRight = DamageDirection.x > 0;
 		if (bRight) {
 			DamageRightAlpha = 1f;
 		}

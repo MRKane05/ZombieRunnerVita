@@ -69,12 +69,12 @@ public class EnemyBehavior : MonoBehaviour {
 
 		if (Time.time < redropTime) { return; }
 
-		Debug.Log("Doing Enemy redrop");
+		//Debug.Log("Doing Enemy redrop");
 		Vector3 dropPoint = Vector3.zero;
 		dropPoint = LevelController.Instance.GetEnemyDropPoint(redropMask);
 		if (dropPoint == Vector3.zero)  //We failed
 		{
-			Debug.Log("redrop failed");
+			//Debug.Log("redrop failed");
 			redropTime = Time.time + 3f;    //Give this a rest until later
 		}
 		else

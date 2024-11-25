@@ -11,6 +11,7 @@ public class PanelHandler : MonoBehaviour {
     public enInteractionType enPanelType = enInteractionType.NONE;  //This'll also be handed as our panel scene types
     public bool IsInitialised { get; protected set; }
     [Space]
+    public bool bCanBeDismissed = true;
     public string returnPanel_Scene = "";   //When the user presses close what panel scene do we fall back to?
     public string returnPanel_Button = "";  //What button will we open when we return from this panel?
     public enInteractionType returnPanelType = enInteractionType.NONE;
@@ -196,6 +197,7 @@ public class PanelHandler : MonoBehaviour {
     {
         if (Input.GetKeyDown(KeyCode.Escape) || Input.GetButtonDown("Triangle") || Input.GetButtonDown("Circle"))
         {
+            if (!bCanBeDismissed) { return; }   //We can't triangle out of this menu
             /*
             if (GameController.Instance)
             {
@@ -203,5 +205,18 @@ public class PanelHandler : MonoBehaviour {
             }*/
             OnClose(); 
         }
+    }
+
+    //Used when we've got a button that wants to send a command back to the level controller, and needs setup in its own scene
+    public void CallFunctionOnLevelController(string functionName)
+    {
+        LevelController.Instance.Invoke(functionName, 0f);
+    }
+
+
+    //Used when we've got a button that wants to send a command back to the game controller, and needs setup in its own scene
+    public void CallFunctionOnGameController(string functionName)
+    {
+
     }
 }

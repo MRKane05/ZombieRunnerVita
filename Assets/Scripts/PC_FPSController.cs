@@ -19,7 +19,6 @@ public class PC_FPSController : MonoBehaviour
     //PROBLEM: This UI stuff needs fixed up
     [Space]
     [Header("HUD Settings")]
-    public DamageIndicatorHandler ourDamageIndicator; //Really this should go through a UI handler, but for the moment...
     public Image FollowIndicator; //Terrible form here too...
     public GameObject DeadIndicator;
 
@@ -86,6 +85,7 @@ public class PC_FPSController : MonoBehaviour
     float sprintStaminaCost = 20f;
     float dodgeTime = 0;         //How much time is left in our dodge?
     float dodgeDirection = 1;
+
     [HideInInspector]
     public float jumpReleaseTime = 0;   //What time did we release jump?
     [HideInInspector]
@@ -640,7 +640,11 @@ public class PC_FPSController : MonoBehaviour
     //This might need more information passed through at some stage, but we're starting with a MVP here
     public void EnemyHitPlayer(GameObject Instigator) {
 
-        ourDamageIndicator.TakeDamage(Instigator.transform.position.x > gameObject.transform.position.x);
+        //ourDamageIndicator.TakeDamage(Instigator.transform.position.x > gameObject.transform.position.x);
+        //Figure out where our damage came from
+        Vector3 damageDirection = (Instigator.transform.position - gameObject.transform.position).normalized;
+        damageDirection = transform.InverseTransformDirection(damageDirection); //Convert this direction into local space
+        PlayerHUDHandler.Instance.takeDamage(damageDirection);
         //This needs to put in place a hit effect, and also a speed penalty
         //Essentially this is a "stumble"
         stumbleTime = stumbleMax;

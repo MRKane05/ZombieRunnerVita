@@ -8,6 +8,8 @@ public class PlayerHUDHandler : MonoBehaviour {
 	public static PlayerHUDHandler Instance { get { return instance; } }
 
 	public Image StaminaBar; //What's our players stamina?
+	public DamageIndicatorHandler damageIndicator; //Really this should go through a UI handler, but for the moment...
+
 
 	void Awake()
 	{
@@ -27,7 +29,18 @@ public class PlayerHUDHandler : MonoBehaviour {
 	}
 
 	public void setStaminaBar(float t)
-    {
+	{
 		StaminaBar.fillAmount = t;
-    }
+	}
+
+	public void takeDamage(Vector3 DamageDirection)
+	{
+		damageIndicator.TakeDamage(DamageDirection);
+	}
+
+	//Called when we die, or when we've successfully finished the run
+	public void changeMenuState(string newState)
+    {
+
+    } 
 }

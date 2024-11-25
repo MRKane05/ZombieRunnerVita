@@ -9,6 +9,9 @@ public class LevelController : MonoBehaviour {
 	private static LevelController instance = null;
 	public static LevelController Instance { get { return instance; } }
 
+	public enum enLevelPlayState { NULL, START, PLAYING, ENDED, PAUSED }
+	public enLevelPlayState levelPlayState = enLevelPlayState.START;
+
 	public PathCreator pathCreator;
 	public Texture2D zombiePropTexture; //This needs to be specific to each level
 	public System.Byte[,] zombiePropTable;
@@ -30,15 +33,60 @@ public class LevelController : MonoBehaviour {
 
 		string PBRPath = GetPRBPath();
 		if (File.Exists(PBRPath))
-        {
+		{
 			//ReadArrayFromBinaryFile(PBRPath);
 			ReadArrayFromResourcesBinaryFile();
 
 		} else
-        {
+		{
 			Debug.LogError("No propensity file for this level! " + PBRPath);
+		}
+
+		setPlayState(enLevelPlayState.START); //Prepare our start functionality stuff
+	}
+
+	void setTimescale(float newTimescale)
+	{
+		Time.timeScale = newTimescale;
+	}
+
+	public void setPlayState(enLevelPlayState newPlaystate)
+	{
+		levelPlayState = newPlaystate;
+		switch(levelPlayState)
+        {
+			case enLevelPlayState.NULL:
+				break;
+			case enLevelPlayState.START:
+				setTimescale(0f); //Pause our play
+								  //We need to bring up our menu, and at some stage do something fancy,  but for the moment: menu
+				UIMenuHandler.Instance.LoadMenuSceneAdditively("Game_LevelStart", null, null);	//Load the game start menu. Hardcoded for the moment
+				break;
+			case enLevelPlayState.PLAYING:
+				//Will need to clear any UI and other bits and bobbs
+				setTimescale(1f);
+				break;
+			case enLevelPlayState.ENDED:
+				//Pull up end menus, or do they slave us to that? I need to figure that one out
+				setTimescale(0f);
+				break;
+			case enLevelPlayState.PAUSED:
+				//There will be a pause menu! It'll be legendary!
+				setTimescale(1f);
+				break;
+			default:
+				break;
         }
 	}
+
+    #region UI Button Calls
+	public void StartRun()
+    {
+		//Logically we'll have some sort of opening. But for the moment we're getting things onto the floor so lets just jump straight into the game
+		setTimescale(1f);
+		levelPlayState = enLevelPlayState.PLAYING;
+    }
+	#endregion
 
 	void Update()
     {
@@ -48,8 +96,9 @@ public class LevelController : MonoBehaviour {
         }
     }
 
-	//This should be a universal function somewhere as it's used in two different places
-	public string GetPRBPath()
+    #region Level Generation Functions
+    //This should be a universal function somewhere as it's used in two different places
+    public string GetPRBPath()
 	{
 #if !UNITY_EDITOR
 		return "ux0:app/VHZR12345/Media/StreamingAssets/Propensities/" + gameObject.scene.name + "_props.bin";
@@ -126,8 +175,11 @@ public class LevelController : MonoBehaviour {
 			Debug.LogError("Error reading zombie prop array from binary file: " + e.Message);
 		}
 	}
+    #endregion
 
-	public Vector3 GetEnemyDropPoint(LayerMask redropMask)
+    #region Enemy Placement Functions
+
+    public Vector3 GetEnemyDropPoint(LayerMask redropMask)
 	{
 
 		if (!bHasPropensityFile)
@@ -282,4 +334,5 @@ public class LevelController : MonoBehaviour {
 
         }
     }
+    #endregion
 }

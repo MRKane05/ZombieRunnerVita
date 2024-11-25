@@ -25,6 +25,7 @@ public class loadedScene
     }
 }
 
+
 //This script handles menu elements, loading menus as scenes and the chatter/functionality between them
 public class UIMenuHandler : MonoBehaviour
 {
@@ -40,9 +41,9 @@ public class UIMenuHandler : MonoBehaviour
         {
             Debug.Log("Somehow there's a duplicate UIMenuHandler in the scene");
             Debug.Log(gameObject.name);
-            Destroy(gameObject);    //Remove ourselves from the scene
+            DestroyImmediate(gameObject);    //Remove ourselves from the scene
         }
-
+        DontDestroyOnLoad(gameObject);
         instance = this;
     }
 
