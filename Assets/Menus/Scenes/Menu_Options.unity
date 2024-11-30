@@ -210,29 +210,29 @@ Prefab:
       propertyPath: m_Pivot.y
       value: 0.5
       objectReference: {fileID: 0}
-    - target: {fileID: 114275548044017474, guid: 029bb57c6427f71468b3cf716f74d31b,
-        type: 2}
-      propertyPath: m_havePropertiesChanged
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 114275548044017474, guid: 029bb57c6427f71468b3cf716f74d31b,
-        type: 2}
-      propertyPath: m_isInputParsingRequired
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 114490819697636868, guid: 029bb57c6427f71468b3cf716f74d31b,
-        type: 2}
-      propertyPath: m_havePropertiesChanged
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 114490819697636868, guid: 029bb57c6427f71468b3cf716f74d31b,
-        type: 2}
-      propertyPath: m_isInputParsingRequired
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 1787538163759024, guid: 029bb57c6427f71468b3cf716f74d31b, type: 2}
       propertyPath: m_Name
       value: Handedness
+      objectReference: {fileID: 0}
+    - target: {fileID: 114490819697636868, guid: 029bb57c6427f71468b3cf716f74d31b,
+        type: 2}
+      propertyPath: m_havePropertiesChanged
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114490819697636868, guid: 029bb57c6427f71468b3cf716f74d31b,
+        type: 2}
+      propertyPath: m_isInputParsingRequired
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114275548044017474, guid: 029bb57c6427f71468b3cf716f74d31b,
+        type: 2}
+      propertyPath: m_havePropertiesChanged
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114275548044017474, guid: 029bb57c6427f71468b3cf716f74d31b,
+        type: 2}
+      propertyPath: m_isInputParsingRequired
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 029bb57c6427f71468b3cf716f74d31b, type: 2}
@@ -249,11 +249,6 @@ Prefab:
   m_Modification:
     m_TransformParent: {fileID: 1327522171}
     m_Modifications:
-    - target: {fileID: 114180910122233696, guid: 3407c817cc4d17148bbb7e98aa320c15,
-        type: 2}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
-      value: 2
-      objectReference: {fileID: 0}
     - target: {fileID: 224548308646913760, guid: 3407c817cc4d17148bbb7e98aa320c15,
         type: 2}
       propertyPath: m_LocalPosition.x
@@ -344,6 +339,11 @@ Prefab:
       propertyPath: m_Pivot.y
       value: 0.5
       objectReference: {fileID: 0}
+    - target: {fileID: 114180910122233696, guid: 3407c817cc4d17148bbb7e98aa320c15,
+        type: 2}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Target
+      value: 
+      objectReference: {fileID: 412733158}
     - target: {fileID: 1487516320239550, guid: 3407c817cc4d17148bbb7e98aa320c15, type: 2}
       propertyPath: m_Name
       value: Button_Return
@@ -357,46 +357,6 @@ Prefab:
         type: 2}
       propertyPath: m_isInputParsingRequired
       value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 114718794928638746, guid: 3407c817cc4d17148bbb7e98aa320c15,
-        type: 2}
-      propertyPath: m_text
-      value: Return
-      objectReference: {fileID: 0}
-    - target: {fileID: 114718794928638746, guid: 3407c817cc4d17148bbb7e98aa320c15,
-        type: 2}
-      propertyPath: m_textInfo.characterCount
-      value: 6
-      objectReference: {fileID: 0}
-    - target: {fileID: 114718794928638746, guid: 3407c817cc4d17148bbb7e98aa320c15,
-        type: 2}
-      propertyPath: m_textInfo.spaceCount
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 114180910122233696, guid: 3407c817cc4d17148bbb7e98aa320c15,
-        type: 2}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Mode
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 114180910122233696, guid: 3407c817cc4d17148bbb7e98aa320c15,
-        type: 2}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_CallState
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 114180910122233696, guid: 3407c817cc4d17148bbb7e98aa320c15,
-        type: 2}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Target
-      value: 
-      objectReference: {fileID: 412733158}
-    - target: {fileID: 114180910122233696, guid: 3407c817cc4d17148bbb7e98aa320c15,
-        type: 2}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_MethodName
-      value: DoClose
-      objectReference: {fileID: 0}
-    - target: {fileID: 114180910122233696, guid: 3407c817cc4d17148bbb7e98aa320c15,
-        type: 2}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Arguments.m_ObjectArgumentAssemblyTypeName
-      value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 3407c817cc4d17148bbb7e98aa320c15, type: 2}
@@ -460,6 +420,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   enPanelType: 2
+  bCanBeDismissed: 1
   returnPanel_Scene: Menu_MainStart
   returnPanel_Button: Button_Options_Load
   returnPanelType: 1
@@ -1111,6 +1072,10 @@ Prefab:
       propertyPath: m_Pivot.y
       value: 0.5
       objectReference: {fileID: 0}
+    - target: {fileID: 1656045505101632, guid: 1c0bee0331ee56440b2c4adfb6a79d68, type: 2}
+      propertyPath: m_Name
+      value: XSensitivity
+      objectReference: {fileID: 0}
     - target: {fileID: 224272962840107814, guid: 1c0bee0331ee56440b2c4adfb6a79d68,
         type: 2}
       propertyPath: m_AnchorMax.y
@@ -1130,10 +1095,6 @@ Prefab:
         type: 2}
       propertyPath: m_isInputParsingRequired
       value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1656045505101632, guid: 1c0bee0331ee56440b2c4adfb6a79d68, type: 2}
-      propertyPath: m_Name
-      value: XSensitivity
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1c0bee0331ee56440b2c4adfb6a79d68, type: 2}

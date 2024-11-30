@@ -806,7 +806,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   enPanelType: 1
-  bCanBeDismissed: 1
+  bCanBeDismissed: 0
   returnPanel_Scene: 
   returnPanel_Button: 
   returnPanelType: 0
@@ -913,6 +913,11 @@ Prefab:
   m_Modification:
     m_TransformParent: {fileID: 359329442}
     m_Modifications:
+    - target: {fileID: 114180910122233696, guid: 3407c817cc4d17148bbb7e98aa320c15,
+        type: 2}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 224548308646913760, guid: 3407c817cc4d17148bbb7e98aa320c15,
         type: 2}
       propertyPath: m_LocalPosition.x
@@ -1026,6 +1031,36 @@ Prefab:
         type: 2}
       propertyPath: m_textInfo.characterCount
       value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 114180910122233696, guid: 3407c817cc4d17148bbb7e98aa320c15,
+        type: 2}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Mode
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 114180910122233696, guid: 3407c817cc4d17148bbb7e98aa320c15,
+        type: 2}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 114180910122233696, guid: 3407c817cc4d17148bbb7e98aa320c15,
+        type: 2}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Target
+      value: 
+      objectReference: {fileID: 603124704}
+    - target: {fileID: 114180910122233696, guid: 3407c817cc4d17148bbb7e98aa320c15,
+        type: 2}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_MethodName
+      value: LoadMenuScene
+      objectReference: {fileID: 0}
+    - target: {fileID: 114180910122233696, guid: 3407c817cc4d17148bbb7e98aa320c15,
+        type: 2}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 114180910122233696, guid: 3407c817cc4d17148bbb7e98aa320c15,
+        type: 2}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Arguments.m_StringArgument
+      value: StrongholdScene
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 3407c817cc4d17148bbb7e98aa320c15, type: 2}

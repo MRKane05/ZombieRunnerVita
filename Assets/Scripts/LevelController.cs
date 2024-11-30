@@ -68,7 +68,9 @@ public class LevelController : MonoBehaviour {
 				break;
 			case enLevelPlayState.ENDED:
 				//Pull up end menus, or do they slave us to that? I need to figure that one out
+				UIMenuHandler.Instance.LoadMenuSceneAdditively("Game_LevelComplete", null, null);
 				setTimescale(0f);
+				//We're also going to have to sort out our collected items from our run, but that might be a "after we've a game loop happening" thing :)
 				break;
 			case enLevelPlayState.PAUSED:
 				//There will be a pause menu! It'll be legendary!

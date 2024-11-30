@@ -8,7 +8,7 @@ public class EndWallBehavior : MonoBehaviour {
     {
         if (other.gameObject.tag == "Player")   //Our player has reached destination. Bring up our menu and level complete stuff
         {
-            Debug.LogError("Player Got To Wall!");
+            LevelController.Instance.setPlayState(LevelController.enLevelPlayState.ENDED);
         }
     }
 }

@@ -640,8 +640,9 @@ public class PC_FPSController : MonoBehaviour
     //This might need more information passed through at some stage, but we're starting with a MVP here
     public void EnemyHitPlayer(GameObject Instigator) {
 
-        //ourDamageIndicator.TakeDamage(Instigator.transform.position.x > gameObject.transform.position.x);
         //Figure out where our damage came from
+        //PROBLEM: I want hits to affect the player differently depending on what state the player is in
+        //we also need to consider what state our player is in an how the damage will affect them in this state
         Vector3 damageDirection = (Instigator.transform.position - gameObject.transform.position).normalized;
         damageDirection = transform.InverseTransformDirection(damageDirection); //Convert this direction into local space
         PlayerHUDHandler.Instance.takeDamage(damageDirection);

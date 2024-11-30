@@ -12,6 +12,12 @@ EditorBuildSettings:
     path: Assets/Menus/Scenes/Menu_Options.unity
     guid: 950c30fa611642a4f9a090939a5a724a
   - enabled: 1
+    path: Assets/Scenes/GameMenu/StrongholdScene.unity
+    guid: ae05fb72c39a02d4fb1457ec0a37f07d
+  - enabled: 1
+    path: Assets/Scenes/GameMenu/Game_RunSelect.unity
+    guid: 130c293340b49074097cc9964ea7f219
+  - enabled: 1
     path: Assets/Menus/Scenes/Game_LevelStart.unity
     guid: 9c0a19afc55cef143a5fadd6401e5a0e
   - enabled: 1

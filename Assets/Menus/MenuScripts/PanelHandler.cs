@@ -107,6 +107,14 @@ public class PanelHandler : MonoBehaviour {
         }
     }
 
+    public virtual void LoadScene(string sceneName)
+    {
+        if (UIMenuHandler.Instance)
+        {
+            UIMenuHandler.Instance.TransitionLoadScene(sceneName);
+        }
+    }
+
     //Handle what our panel does if we get a callback from the loading system. This'll be the menu having loaded a NEW menu
     public virtual void LoadMenuSceneCallback(loadedScene newScene, bool bSuccess)
     {

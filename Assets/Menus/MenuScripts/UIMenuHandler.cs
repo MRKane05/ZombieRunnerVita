@@ -43,8 +43,11 @@ public class UIMenuHandler : MonoBehaviour
             Debug.Log(gameObject.name);
             DestroyImmediate(gameObject);    //Remove ourselves from the scene
         }
-        DontDestroyOnLoad(gameObject);
-        instance = this;
+        else
+        {
+            DontDestroyOnLoad(gameObject);
+            instance = this;
+        }
     }
 
     //This is called by a menu that's marked as "Base" to set itself as the menu that the entire system can return back to
@@ -99,6 +102,12 @@ public class UIMenuHandler : MonoBehaviour
         }
     }
 
+    public void TransitionLoadScene(string sceneName)
+    {
+        //there'll be no menu stuff here, it's simply doing a load
+        SceneManager.LoadScene(sceneName, LoadSceneMode.Single);
+    }
+
     // Function to load a scene additively and store its reference
     public void LoadMenuSceneAdditively(string sceneName, PanelHandler caller, GameObject callingButton)
     {
@@ -120,8 +129,12 @@ public class UIMenuHandler : MonoBehaviour
         // Once loaded, store the scene reference
         lastLoadedScene = SceneManager.GetSceneByName(sceneName);
         loadedScene newScene = new loadedScene(lastLoadedScene, caller, callingButton);
-        //Debug.Log($"Scene '{loadedScene.name}' loaded and reference stored.");
-        caller.LoadMenuSceneCallback(newScene, true);
+        //Debug.Log($"Scene '{newScene.scene.name}' loaded and reference stored.");
+        //Debug.Log("new Scene: " + newScene);
+        if (caller != null)
+        {
+            caller.LoadMenuSceneCallback(newScene, true);
+        }
     }
 
     // Function to unload the stored scene
