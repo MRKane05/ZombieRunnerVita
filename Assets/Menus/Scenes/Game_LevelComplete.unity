@@ -699,7 +699,7 @@ Prefab:
     - target: {fileID: 114180910122233696, guid: 3407c817cc4d17148bbb7e98aa320c15,
         type: 2}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_MethodName
-      value: LoadScene
+      value: CallFunctionOnGameController
       objectReference: {fileID: 0}
     - target: {fileID: 114180910122233696, guid: 3407c817cc4d17148bbb7e98aa320c15,
         type: 2}
@@ -709,7 +709,7 @@ Prefab:
     - target: {fileID: 114180910122233696, guid: 3407c817cc4d17148bbb7e98aa320c15,
         type: 2}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Arguments.m_StringArgument
-      value: StrongholdScene
+      value: RunSuccessful
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 3407c817cc4d17148bbb7e98aa320c15, type: 2}

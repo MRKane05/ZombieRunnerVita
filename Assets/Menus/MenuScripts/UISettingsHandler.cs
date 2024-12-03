@@ -27,8 +27,11 @@ public class UISettingsHandler : MonoBehaviour {
             Debug.Log(gameObject.name);
             Destroy(gameObject);    //Remove ourselves from the scene
         }
+        else
+        {
 
-        instance = this;
+            instance = this;
+        }
     }
 
     //This command must be called when exiting the settings menu to assure that the system sends through information

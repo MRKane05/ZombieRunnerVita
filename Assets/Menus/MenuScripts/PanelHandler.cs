@@ -225,6 +225,6 @@ public class PanelHandler : MonoBehaviour {
     //Used when we've got a button that wants to send a command back to the game controller, and needs setup in its own scene
     public void CallFunctionOnGameController(string functionName)
     {
-
+        GameController.Instance.Invoke(functionName, 0f);
     }
 }
