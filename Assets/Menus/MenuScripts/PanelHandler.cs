@@ -46,8 +46,10 @@ public class PanelHandler : MonoBehaviour {
         {
             UIMenuHandler.Instance.AssertMenuAsBase(this);
         }
-
-        DoEnable(startButton.name);
+        if (startButton)
+        {
+            DoEnable(startButton.name);
+        }
     }
 
     void OnEnable()
@@ -100,9 +102,11 @@ public class PanelHandler : MonoBehaviour {
     //This is a terrible place to put this, but for the moment...
     public virtual void LoadMenuScene(string sceneName)
     {
+        Debug.Log("Loading Scene: " + sceneName);
         //SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Additive);
         if (UIMenuHandler.Instance)
         {
+            Debug.Log("Additively loading scene: " + sceneName);
             UIMenuHandler.Instance.LoadMenuSceneAdditively(sceneName, this, null);
         }
     }

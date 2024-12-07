@@ -970,6 +970,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1992426582}
   - component: {fileID: 1992426583}
+  - component: {fileID: 1992426584}
   m_Layer: 0
   m_Name: StrongholdMenu
   m_TagString: Untagged
@@ -1013,6 +1014,17 @@ MonoBehaviour:
   returnPanel_Button: 
   returnPanelType: 0
   startButton: {fileID: 2020109594}
+--- !u!114 &1992426584
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1992426581}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0922f46a3fbfa74bb20a57b31f7c5a5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &2020109592
 Prefab:
   m_ObjectHideFlags: 0

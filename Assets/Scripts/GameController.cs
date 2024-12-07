@@ -4,14 +4,25 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 
 [System.Serializable]
+public class townPackage
+{
+	public string townName = "";
+	public string basicDescription = "";
+	public float healthImprovement = 5;
+	public float value = 10;
+	public float weight = 2;
+	public float deliveryUrgence = 0.5f; //0-1 scale on how urgent this package is. This'll relate to the value of the package and the odds that it won't be there when the player gets back
+	//This needs some sense of delivery urgence
+}
+
+[System.Serializable]
 public class runDetails
 {
 	public enum enRunState { NULL, HOME, RUNNING, ARRIVED }
 	public enRunState runState = enRunState.HOME;
 	public string endLocation = "";
 	public string startLocation = "";
-
-
+	public List<townPackage> carriedPackages = new List<townPackage>();
 }
 
 //Because we need some class that can act as a unifier for many of our systems
@@ -21,6 +32,8 @@ public class GameController : MonoBehaviour {
 	public static GameController Instance { get { return instance; } }
 
 	public runDetails RunDetails = new runDetails();
+
+	public List<townPackage> avaliablePackages = new List<townPackage>();
 	void Awake()
 	{
 		if (instance)
@@ -61,5 +74,11 @@ public class GameController : MonoBehaviour {
 		RunDetails.runState = runDetails.enRunState.ARRIVED;
 		//Now that that's updated lets move to loading our scene
 		SceneManager.LoadScene("StrongholdScene", LoadSceneMode.Single);
+		//We need a callback that tells this scene that we've just arrived after doing a run. Or something to that extent.
+	}
+
+	public void SetAvaliablePackages(List<townPackage> newPackages)
+    {
+		avaliablePackages = newPackages;
 	}
 }

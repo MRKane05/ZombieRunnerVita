@@ -9,7 +9,7 @@ public class UIButtonFunction : MonoBehaviour, ISelectHandler
 {
     //public bool bNeedsSelected = false;
 
-    public void OnClick()
+    public virtual void OnClick()
     {
         if (UIInteractionSound.Instance)
         {
@@ -17,7 +17,7 @@ public class UIButtonFunction : MonoBehaviour, ISelectHandler
         }
     }
 
-    public void OnSelect(BaseEventData eventData)
+    public virtual void OnSelect(BaseEventData eventData)
     {
         if (UIInteractionSound.Instance)
         {
