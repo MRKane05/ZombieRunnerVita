@@ -206,7 +206,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0136799ce60b8af4182693f3a7c9c8f6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  playerInfo:
+    avaliableCash: 43
+    avaliableWeight: 15
   RunDetails:
     runState: 1
     endLocation: 
     startLocation: Musselbrough
+    carriedPackages: []
+  avaliablePackages: []
+  carriedPackages: []

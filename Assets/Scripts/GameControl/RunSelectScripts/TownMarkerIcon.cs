@@ -21,7 +21,7 @@ public class TownMarkerIcon : MonoBehaviour, ISelectHandler
 		//this needs to send a command through to select the correct run and setup accordingly
 		//GameController.Instance.DoRunTo(townName);
 		//I've got a problem that everything is referenced and cross-referenced in the files. This needs cleaned up
-		ourSelectMenu.DoRunToTown(townName);
+		ourSelectMenu.DoRunToTown(GameController.Instance.RunDetails.startLocation, townName);
     }
 
 	public void OnSelect(BaseEventData eventData)

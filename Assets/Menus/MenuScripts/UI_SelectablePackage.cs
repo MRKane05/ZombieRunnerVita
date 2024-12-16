@@ -6,6 +6,8 @@ using TMPro;
 
 public class UI_SelectablePackage : UI_ToggleButton {
     public TextMeshProUGUI itemName;
+    public TextMeshProUGUI distance;
+    public TextMeshProUGUI itemType;
     public TextMeshProUGUI itemValueTitle;
     public TextMeshProUGUI itemWeightTitle;
 
@@ -21,7 +23,8 @@ public class UI_SelectablePackage : UI_ToggleButton {
         ourPackageHandler = newPackageHandler;
 
         targetPackage = newTargetPackage;
-        itemName.text = targetPackage.basicDescription;
+        itemName.text = targetPackage.townName;
+        itemType.text = targetPackage.packageType;
         itemValue = targetPackage.value;
         itemWeight = targetPackage.weight;
 

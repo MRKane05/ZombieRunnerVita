@@ -30,9 +30,21 @@ public class MapLocation {
 	public List<townPackage> avaliablePackages = new List<townPackage>();	//What packages do we have for other towns?
 }
 
+[System.Serializable]
+public class PackageType
+{
+	public string type = "";
+	public string description = "";
+	public Range value;
+	public Range weight;
+	public Range healthImprovement;
+	public float commonality = 1;	//Odds of this item showing up as a package
+}
+
 public class RunSelectMenu : MonoBehaviour {
 
 	public List<MapLocation> mapLocations = new List<MapLocation>();
+	public List<PackageType> packageTypes = new List<PackageType>();
 	UI_LocationDetailsMenuHandler ourDetailsPanel;
 	// Use this for initialization
 	void Start () {
@@ -43,7 +55,7 @@ public class RunSelectMenu : MonoBehaviour {
 		foreach(MapLocation thisLocation in mapLocations)
         {
 			thisLocation.referenceObject.GetComponent<TownMarkerIcon>().ourSelectMenu = this;
-			List<townPackage> newTownPackages = addTownPackages((int)Random.RandomRange(3, 6));
+			List<townPackage> newTownPackages = addTownPackages(thisLocation, (int)Random.RandomRange(3, 5));
 			thisLocation.avaliablePackages = newTownPackages;
 		}
 	}
@@ -78,15 +90,16 @@ public class RunSelectMenu : MonoBehaviour {
 		}
 	}
 
-	public void DoRunToTown(string townName)
+	public void DoRunToTown(string startTown, string destinationTown)
 	{
+		GameController.Instance.RunDetails.endLocation = destinationTown; //Set this so that the system will know where to go
 		//This needs to pass information through to our game controller to select the packages
 		//Find the correct run
 		//There'll be an OK button to kick things off in the next menu :)
 		//GameController.Instance.DoRunTo(townName);
 		foreach (MapLocation mapLoc in mapLocations)
 		{
-			if (mapLoc.locationName == townName)
+			if (mapLoc.locationName == startTown)	//For the packages we need to have the town we're IN
 			{
 				GameController.Instance.SetAvaliablePackages(mapLoc.avaliablePackages); //This is so that we can access this before the run
 																						//Really we need to include the map we'll be running here too based off of from/to details (somehow!)
@@ -106,24 +119,33 @@ public class RunSelectMenu : MonoBehaviour {
 		}
 	}
 
-	public List<townPackage> addTownPackages(int thisNumber)
+	public List<townPackage> addTownPackages(MapLocation thisLocation, int thisNumber)
     {
 		List<townPackage> newPackages = new List<townPackage>();
 		for(int i=0; i<thisNumber; i++)
         {
-			newPackages.Add(createTownPackage());
+			//We need the possible destinations here to pass through as options
+			int randomTown = (int)Random.Range(0, thisLocation.avaliableRuns.Count);
+			//Debug.Log("Random Town: " + randomTown);
+			string targetTown = thisLocation.avaliableRuns[randomTown].GetComponent<TownMarkerIcon>().townName;
+			newPackages.Add(createTownPackage(targetTown));
         }
 		return newPackages;
 	}
 
-	townPackage createTownPackage()	//PROBLEM: This will need expansion, and concept of identity
+	townPackage createTownPackage(string targetTown)	//PROBLEM: This will need expansion, and concept of identity
     {
+		//So basically we'd like to get a package randomly made from our list packageTypes
+		int randomPackage = (int)Random.Range(0, packageTypes.Count);
+		PackageType newPackage = packageTypes[randomPackage];
+
 		townPackage newTownPackage = new townPackage();
-		newTownPackage.basicDescription = "Package to bring to a town";
-		newTownPackage.healthImprovement = 5;
-		newTownPackage.value = Random.RandomRange(10, 25);
-		newTownPackage.weight = Random.RandomRange(0.5f, 3);
-		newTownPackage.townName = "Any Town";
+		newTownPackage.townName = targetTown;
+		newTownPackage.basicDescription = newPackage.description;
+		newTownPackage.packageType = newPackage.type;
+		newTownPackage.value = Mathf.CeilToInt(newPackage.value.GetRandom());
+		newTownPackage.weight = Mathf.CeilToInt(newPackage.weight.GetRandom());
+
 		return newTownPackage;
-    }
+	}
 }

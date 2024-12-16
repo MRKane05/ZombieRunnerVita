@@ -23,8 +23,8 @@ public class UISettingsHandler : MonoBehaviour {
     {
         if (instance)
         {
-            Debug.Log("Somehow there's a duplicate UISettingsHandler in the scene");
-            Debug.Log(gameObject.name);
+            //Debug.Log("Somehow there's a duplicate UISettingsHandler in the scene");
+            //Debug.Log(gameObject.name);
             Destroy(gameObject);    //Remove ourselves from the scene
         }
         else

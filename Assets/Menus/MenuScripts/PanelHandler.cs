@@ -179,7 +179,7 @@ public class PanelHandler : MonoBehaviour {
                 break;
             case enInteractionType.LOADED:
                 //We need to load a scene for this "return"
-
+                UIMenuHandler.Instance.LoadMenuSceneAdditively(returnPanel_Scene, null, null);  //Do a dumb load to our other scene
                 break;
             default:
                 break;
@@ -215,7 +215,10 @@ public class PanelHandler : MonoBehaviour {
             {
                 GameController.Instance.PlayReturn();
             }*/
-            OnClose(); 
+            if (bCanBeDismissed)
+            {
+                OnClose();
+            }
         }
     }
 

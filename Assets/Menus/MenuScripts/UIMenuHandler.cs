@@ -39,8 +39,8 @@ public class UIMenuHandler : MonoBehaviour
     {
         if (instance)
         {
-            Debug.Log("Somehow there's a duplicate UIMenuHandler in the scene");
-            Debug.Log(gameObject.name);
+            //Debug.Log("Somehow there's a duplicate UIMenuHandler in the scene");
+            //Debug.Log(gameObject.name);
             DestroyImmediate(gameObject);    //Remove ourselves from the scene
         }
         else
@@ -53,7 +53,7 @@ public class UIMenuHandler : MonoBehaviour
     //This is called by a menu that's marked as "Base" to set itself as the menu that the entire system can return back to
     public void AssertMenuAsBase(PanelHandler thisMenu)
     {
-        Debug.Log("Menu asserted as base: " + thisMenu.name);
+        //Debug.Log("Menu asserted as base: " + thisMenu.name);
         if (baseMenu) //we should do something about this...
         {
 

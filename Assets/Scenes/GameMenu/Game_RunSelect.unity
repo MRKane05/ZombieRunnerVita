@@ -323,6 +323,79 @@ MonoBehaviour:
     - {fileID: 95684698}
     townHealth: 33
     avaliablePackages: []
+  packageTypes:
+  - type: Medicine
+    description: A collections of assorted medications
+    value:
+      Min: 20
+      Max: 300
+    weight:
+      Min: 0.5
+      Max: 3
+    healthImprovement:
+      Min: 10
+      Max: 15
+    commonality: 0.1
+  - type: Electrical
+    description: Necessary electrical components
+    value:
+      Min: 5
+      Max: 100
+    weight:
+      Min: 0.5
+      Max: 3
+    healthImprovement:
+      Min: 15
+      Max: 20
+    commonality: 0.5
+  - type: Plumbing
+    description: Necessary plumbing equipment
+    value:
+      Min: 5
+      Max: 20
+    weight:
+      Min: 1
+      Max: 5
+    healthImprovement:
+      Min: 10
+      Max: 20
+    commonality: 0.6
+  - type: Building
+    description: Scarce building components
+    value:
+      Min: 5
+      Max: 150
+    weight:
+      Min: 1
+      Max: 10
+    healthImprovement:
+      Min: 10
+      Max: 20
+    commonality: 0.75
+  - type: Spices
+    description: Spices for taster food
+    value:
+      Min: 5
+      Max: 150
+    weight:
+      Min: 0.5
+      Max: 5
+    healthImprovement:
+      Min: 5
+      Max: 15
+    commonality: 1
+  - type: Crafting
+    description: 'Sewing and '
+    value:
+      Min: 5
+      Max: 150
+    weight:
+      Min: 0.5
+      Max: 5
+    healthImprovement:
+      Min: 5
+      Max: 15
+    commonality: 1
 --- !u!1 &505019463
 GameObject:
   m_ObjectHideFlags: 0
@@ -2207,10 +2280,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5500ea125f154a045ba9d5e12fe44e79, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  enPanelType: 1
+  enPanelType: 2
   bCanBeDismissed: 1
   returnPanel_Scene: 
-  returnPanel_Button: 
+  returnPanel_Button: Button_SelectRun
   returnPanelType: 1
   startButton: {fileID: 95684698}
 --- !u!114 &1992426584

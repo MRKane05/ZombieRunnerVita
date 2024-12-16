@@ -9,7 +9,7 @@ public class UIHelpers : MonoBehaviour {
     public static void SetSelectedButton(GameObject toThis)
     {
 #if UNITY_EDITOR
-        Debug.Log("UIHelper Button Select: " + toThis);
+        //Debug.Log("UIHelper Button Select: " + toThis);
 #endif
         EventSystem.current.SetSelectedGameObject(null);
         EventSystem.current.SetSelectedGameObject(toThis);
