@@ -457,7 +457,7 @@ public class PC_FPSController : MonoBehaviour
 
     void OnControllerColliderHit(ControllerColliderHit hit)
     {
-        if (hit.normal.y > 0.9f)   //Change if we want incline
+        if (hit.normal.y > 0.9f)   //See if the contact is underneath us
         {
             //What we want to be is NOT standing on top of an enemy, so lets stun and knock the enemy out of the way if the player does this (instant dissolve)
             if (hit.collider.gameObject.GetComponent<EnemyBehavior>())

@@ -7,7 +7,7 @@ public class EnemyBehavior : MonoBehaviour {
 	public LayerMask redropMask;
 	public float speed_walk = 3f;
 	public float speed_amble = 6f;
-	float speed_move = 0f;
+	protected float speed_move = 0f;
 
 	[HideInInspector]
 	public bool bHasStruckPlayer = false;
@@ -15,38 +15,114 @@ public class EnemyBehavior : MonoBehaviour {
 	public float dash_radius = 7f;  //At what point do we speed up?
 
 	public Range attentionRange = new Range(7f, 15f);
-	float attention_radius = 15f; //If our player is outside of this range we just do Zombie stuff
+	protected float attention_radius = 15f; //If our player is outside of this range we just do Zombie stuff
 	public VATCharacterAnimator targetCharacter;
 
 
 	float EnemyFallSpeed = 0;
 	float gravity = 20f;
 
-	CharacterController characterController;
-	Vector3 startPosition = Vector3.zero;
+	protected CharacterController characterController;
+	protected Vector3 startPosition = Vector3.zero;
 
 	float redropTime = 0;
 	bool bZombieWaiting = true;
 
+	protected Vector3 playerDir = Vector3.zero;
+	protected float distToPlayer = 100f;
+
 	void Start() {
 		characterController = gameObject.GetComponent<CharacterController>();
 		startPosition = gameObject.transform.position;
-		attention_radius = attentionRange.GetRandom();
+		attention_radius = attentionRange.GetRandom() * attentionRange.GetRandom();
 		PickZombieStartingState();
 	}
 
 	public void Update() {
-		DoEnemyMove();  //Move our enemy towards our player
-						//PickEnemyFrame(); //Our enemies will play a "grab" animation when they're close
-						//If we're behind the player we should "re-drop" forward of the player somewhere to be an enemy a second time around (same as if we die)
-						//if (PC_FPSController.Instance.gameObject.transform.position.z > gameObject.transform.position.z || gameObject.transform.position.z - PC_FPSController.Instance.gameObject.transform.position.z > 50) {
-						//So we need a smarter way to tell if we're behind our player...
+		DoUpdate();
+	}
+
+	public virtual void DoUpdate() { 
+		DoGravity();
+
+		//Calculate the player details to hand through to the movement systems
+		Vector3 forward = transform.TransformDirection(Vector3.forward);
+		Vector3 right = transform.TransformDirection(Vector3.right);
+		playerDir = PC_FPSController.Instance.gameObject.transform.position - gameObject.transform.position;
+		distToPlayer = playerDir.sqrMagnitude;
+
+		//Really we should piggyback our screen position information here too
+
+
+		float playerAngle = Mathf.Atan2(playerDir.x, playerDir.z);
+		playerDir.y = 0; //Flatten our movement so we don't fly...
+		playerDir = playerDir.normalized;
+
+
+		if (distToPlayer > attention_radius)
+		{
+			characterController.Move(Vector3.up * EnemyFallSpeed * Time.deltaTime); //So that we'll fall into position before the player sees us
+			return; //Don't movie our zombie, save some process
+		}
+		else if (bZombieWaiting)
+		{
+			//We just noticed our player. We need to decide if we're a walker, or a runner, and possibly play a challenge sound/start audio
+			bZombieWaiting = false;
+			PickZombieMoveState();
+		}
+
+		if (!bZombieWaiting)
+		{
+			DoEnemyMove(playerAngle, playerDir);  //Move our enemy towards our player
+		}
+		//PickEnemyFrame(); //Our enemies will play a "grab" animation when they're close
+		//If we're behind the player we should "re-drop" forward of the player somewhere to be an enemy a second time around (same as if we die)
+		//if (PC_FPSController.Instance.gameObject.transform.position.z > gameObject.transform.position.z || gameObject.transform.position.z - PC_FPSController.Instance.gameObject.transform.position.z > 50) {
+		//So we need a smarter way to tell if we're behind our player...
 		//Debug.Log(Vector3.Dot(PC_FPSController.Instance.gameObject.transform.forward, Vector3.Normalize(PC_FPSController.Instance.gameObject.transform.position - gameObject.transform.position)));
 		
 		if (Vector3.Dot(PC_FPSController.Instance.gameObject.transform.forward, Vector3.Normalize(gameObject.transform.position - PC_FPSController.Instance.gameObject.transform.position)) < -0.5f) { 
 			ReDropEnemy();
 		}
-		
+	}
+
+	Vector2 standardizeVector(Vector2 thisVec)
+    {
+		Vector2 localVec = Vector2.zero;
+		if (Mathf.Abs(thisVec.x) > Mathf.Abs(thisVec.y))
+        {
+			//Standardize to X
+			float factor = Mathf.Abs(thisVec.x);
+			localVec = new Vector2(thisVec.x / factor, thisVec.y / factor);
+        } else
+        {
+			//Standardize to y
+			float factor = Mathf.Abs(thisVec.y);
+			localVec = new Vector2(thisVec.x / factor, thisVec.y / factor);
+		}
+		return localVec;
+    }
+
+	public virtual Vector3 GetWidgetPosition()
+    {
+		Vector3 localPlayerDir = Camera.main.transform.InverseTransformDirection(playerDir);
+		Vector2 flatPlayerDir = new Vector2(localPlayerDir.x, localPlayerDir.z);
+		flatPlayerDir = standardizeVector(flatPlayerDir);   //This could be problematic as we don't want normalized, we want standardized...
+		return new Vector3(flatPlayerDir.x, flatPlayerDir.y, distToPlayer);
+    }
+
+	public virtual void TriggerStrikePlayer(Collider other)
+    {
+		if (!bHasStruckPlayer)
+		{
+			PC_FPSController playerController = other.gameObject.GetComponent<PC_FPSController>();
+			if (playerController)
+			{
+				//We can strike this player
+				HitPlayer();	//Handles our animation
+				playerController.EnemyHitPlayer(gameObject);
+			}
+		}
 	}
 
 	string currentAnimation = "";
@@ -65,7 +141,7 @@ public class EnemyBehavior : MonoBehaviour {
 	}
 
 
-	public void ReDropEnemy() {
+	public virtual void ReDropEnemy() {
 
 		if (Time.time < redropTime) { return; }
 
@@ -83,7 +159,7 @@ public class EnemyBehavior : MonoBehaviour {
 		}
 	}
 
-	void PickZombieStartingState()
+	protected virtual void PickZombieStartingState()
     {
 		float randState = Random.value;
 		if (randState > 0.75f)
@@ -103,7 +179,7 @@ public class EnemyBehavior : MonoBehaviour {
 		}
     }
 
-	void PickZombieMoveState()
+	protected virtual void PickZombieMoveState()
     {
 		float rndState = Random.value;
 		if (rndState > 0.3f)
@@ -132,14 +208,8 @@ public class EnemyBehavior : MonoBehaviour {
 		PickZombieStartingState();
 	}
 
-	public void DoEnemyMove()
-	{
-		//PROBLEM: This will need to be replaced with a curve sample for our direction
-		Vector3 forward = transform.TransformDirection(Vector3.forward);
-		Vector3 right = transform.TransformDirection(Vector3.right);
-		Vector3 playerDir = PC_FPSController.Instance.gameObject.transform.position - gameObject.transform.position;
-		float distToPlayer = playerDir.magnitude;
-
+	public void DoGravity()
+    {
 		if (characterController.isGrounded)
 		{
 			EnemyFallSpeed = 0;
@@ -148,21 +218,11 @@ public class EnemyBehavior : MonoBehaviour {
 		{
 			EnemyFallSpeed -= gravity * Time.deltaTime;
 		}
+	}
 
-		if (distToPlayer > attention_radius) {
-			characterController.Move(Vector3.up * EnemyFallSpeed * Time.deltaTime); //So that we'll fall into position before the player sees us
-			return; //Don't movie our zombie, save some process
-		} else if (bZombieWaiting)
-        {
-			//We just noticed our player. We need to decide if we're a walker, or a runner, and possibly play a challenge sound/start audio
-			bZombieWaiting = false;
-			PickZombieMoveState();
-		}
+	public virtual void DoEnemyMove(float playerAngle, Vector3 playerDir)
+	{
 
-		float playerAngle = Mathf.Atan2(playerDir.x, playerDir.z);
-		//Debug.Log(playerAngle);
-		playerDir.y = 0; //Flatten our movement so we don't fly...
-		playerDir = playerDir.normalized;
 		//It's actually a little pointless to have these different speeds as the player doesn't get to see it
 		float moveSpeed = speed_move; // distToPlayer > dash_radius ? speed_amble : speed_dash;
 

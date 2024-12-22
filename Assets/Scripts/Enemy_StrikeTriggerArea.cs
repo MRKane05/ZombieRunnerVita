@@ -11,6 +11,9 @@ public class Enemy_StrikeTriggerArea : MonoBehaviour {
 
 	void OnTriggerEnter(Collider other)
     {
+		//This could do with getting passed to a delegate function on the Enemy controller
+		ourBaseEnemy.TriggerStrikePlayer(other);
+		/*
 		if (!ourBaseEnemy.bHasStruckPlayer) {
 			PC_FPSController playerController = other.gameObject.GetComponent<PC_FPSController>();
 			if (playerController) {
@@ -19,6 +22,6 @@ public class Enemy_StrikeTriggerArea : MonoBehaviour {
 				ourBaseEnemy.HitPlayer();
 				playerController.EnemyHitPlayer(gameObject);
 			}
-		}
+		}*/
     }
 }
