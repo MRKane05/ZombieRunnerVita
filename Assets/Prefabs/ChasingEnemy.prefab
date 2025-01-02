@@ -1102,7 +1102,7 @@ MonoBehaviour:
   speed_walk: 3
   speed_amble: 6
   bHasStruckPlayer: 0
-  dash_radius: 7
+  dash_radius: 16
   attentionRange:
     Min: 15
     Max: 20

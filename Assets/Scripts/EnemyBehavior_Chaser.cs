@@ -18,6 +18,8 @@ public class EnemyBehavior_Chaser : EnemyBehavior {
 	float hitPauseDuration = 1f; //This'll change to adjust difficulty
 	float runSpeed_slow = 3;
 
+	GameObject ourChaserIcon;
+
 	void Start()
 	{
 		characterController = gameObject.GetComponent<CharacterController>();
@@ -27,6 +29,9 @@ public class EnemyBehavior_Chaser : EnemyBehavior {
 		PickRunState();
 		speed_move = speed_amble;
 		//We need to add our tracking marker to the HUD
+		ourChaserIcon = PlayerHUDHandler.Instance.AddIndicatorIcon(ChaserIndicatorPrefab);
+		Enemy_Chasericon newChaser = ourChaserIcon.GetComponent<Enemy_Chasericon>();
+		newChaser.parentEnemy = this;
 	}
 
 	void PickRunState()
