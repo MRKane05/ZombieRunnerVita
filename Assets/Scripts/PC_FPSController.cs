@@ -14,7 +14,7 @@ public class PC_FPSController : MonoBehaviour
     private static PC_FPSController instance = null;
     public static PC_FPSController Instance { get { return instance; } }
 
-    public PathCreator pathCreator;
+    PathCreator pathCreator;
 
     //PROBLEM: This UI stuff needs fixed up
     [Space]
@@ -140,6 +140,10 @@ public class PC_FPSController : MonoBehaviour
     float heightScale = 1f;
     float heightScaleSpeed = 5f;
 
+    public float health = 100f; //Lets try the COD approach to health
+    float lastHitTime = 0;
+    float healthCooldownTime = 3f;
+    float healthRecovery = 20f;
     bool bPlayerDead = false;
     public bool bPlayerInvincible = false;
 
@@ -168,8 +172,12 @@ public class PC_FPSController : MonoBehaviour
 	}
 
     Vector3 StartPosition = Vector3.zero;
-    void Start()
+    IEnumerator Start()
     {
+        while (!LevelController.Instance && !GameController.Instance)
+        {
+            yield return null; //Wait for everything to be setup
+        }
         states = new PC_MoveStateFactory(this);
         // currentState = states.EnemyNullState();
         Func<PC_BaseState>[] allStates = new Func<PC_BaseState>[] { states.PCNullState, states.PCRunState, states.PCAirbourne, states.PCWallKick, states.PCMantleState, states.PCWallRunState };
@@ -188,9 +196,11 @@ public class PC_FPSController : MonoBehaviour
         StartPosition = gameObject.transform.position;
 
         //Handle our curve position
+        pathCreator = LevelController.Instance.pathCreator; //Set this so that the player doesn't always have to be setup
         bestTime = pathCreator.path.GetClosestTimeOnPath(gameObject.transform.position);  //This is actually well optimised...
         bestDistance = pathCreator.path.GetClosestDistanceAlongPath(gameObject.transform.position);
         priorPosition = gameObject.transform.position;
+
     }
 
     string currentAnimation = "";
@@ -287,6 +297,8 @@ public class PC_FPSController : MonoBehaviour
         if (!pathCreator)
         {
             Debug.LogError("No assigned path on the player controller!");
+            //Alternatively, just assign it at this stage
+            pathCreator = LevelController.Instance.pathCreator;
             return Vector3.forward;
         }
 
@@ -593,10 +605,22 @@ public class PC_FPSController : MonoBehaviour
     }
     #endregion
 
+    void HandleHealthSystems()
+    {
+        if (lastHitTime + healthCooldownTime < Time.time)
+        {
+            //We can start doing the call of duty health time
+            health += healthRecovery * Time.deltaTime;
+            health = Mathf.Clamp(health, -1f, 100f);
+            
+        }
+        PlayerHUDHandler.Instance.setHealthBar(health / 100f);
+    }
+
     void Update()
     {
         currentState.UpdateState(); //Update our current movement state
-
+        HandleHealthSystems();
         HandleControllerScale();
         HandleMomentumControl();
         //And I don't see why we can't just leave the camera controller here...
@@ -638,7 +662,7 @@ public class PC_FPSController : MonoBehaviour
     }
 
     //This might need more information passed through at some stage, but we're starting with a MVP here
-    public void EnemyHitPlayer(GameObject Instigator) {
+    public void EnemyHitPlayer(GameObject Instigator, bool bHitByChaser) {
 
         //Figure out where our damage came from
         //PROBLEM: I want hits to affect the player differently depending on what state the player is in
@@ -647,10 +671,22 @@ public class PC_FPSController : MonoBehaviour
         damageDirection = transform.InverseTransformDirection(damageDirection); //Convert this direction into local space
         PlayerHUDHandler.Instance.takeDamage(damageDirection);
         //This needs to put in place a hit effect, and also a speed penalty
-        //Essentially this is a "stumble"
-        stumbleTime = stumbleMax;
-        boostTime = 0; //Getting hit cancels our bost
-        setCurrentAnimation("Hit_Left");    //Our hits need a special handler as technically they're grounded
+        if (!bHitByChaser)
+        {
+            //Essentially this is a "stumble"
+            stumbleTime = stumbleMax;
+            boostTime = 0; //Getting hit cancels our bost
+            setCurrentAnimation("Hit_Left");    //Our hits need a special handler as technically they're grounded
+            health -= 10f;
+        } else
+        {
+            boostTime = 0.125f; //Give the player a boost when they're clobbered. This mightn't be the right way of going about this...
+            setCurrentAnimation("Hit_Behind");    //Our hits need a special handler as technically they're grounded
+            //This hit is intended to do more damage than the other ones which are "brusing hits"
+            health -= 30f;
+        }
+        lastHitTime = Time.time;
+        
         //setCurrentAnimation("Hit_Guard");
     }
 

@@ -9,7 +9,8 @@ public class PlayerHUDHandler : MonoBehaviour {
 
 	public Image StaminaBar; //What's our players stamina?
 	public DamageIndicatorHandler damageIndicator; //Really this should go through a UI handler, but for the moment...
-
+	public Image healthBar;
+	public GameObject ChaserIndicatorsBase;
 
 	void Awake()
 	{
@@ -33,6 +34,11 @@ public class PlayerHUDHandler : MonoBehaviour {
 		StaminaBar.fillAmount = t;
 	}
 
+	public void setHealthBar(float t)
+    {
+		healthBar.fillAmount = t;
+    }
+
 	public void takeDamage(Vector3 DamageDirection)
 	{
 		damageIndicator.TakeDamage(DamageDirection);
@@ -42,5 +48,14 @@ public class PlayerHUDHandler : MonoBehaviour {
 	public void changeMenuState(string newState)
     {
 
-    } 
+    }
+
+    #region Indicator Functions
+	public GameObject AddIndicatorIcon(GameObject thisPrefab)
+    {
+		GameObject newIndicator = Instantiate(thisPrefab, ChaserIndicatorsBase.transform);
+		newIndicator.transform.localScale = Vector3.one;
+		return newIndicator;
+    }
+    #endregion
 }

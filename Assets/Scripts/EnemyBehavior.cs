@@ -42,7 +42,15 @@ public class EnemyBehavior : MonoBehaviour {
 		DoUpdate();
 	}
 
-	public virtual void DoUpdate() { 
+	public virtual void DoUpdate() {
+		//Debug.Log(Vector3.Dot(PC_FPSController.Instance.gameObject.transform.forward, Vector3.Normalize(gameObject.transform.position - PC_FPSController.Instance.gameObject.transform.position)));
+		//Check to see if we're behind the player. It's important that this doesn't get avoided
+		if (Vector3.Dot(PC_FPSController.Instance.gameObject.transform.forward, Vector3.Normalize(gameObject.transform.position - PC_FPSController.Instance.gameObject.transform.position)) < -0.5f)
+		{
+			//Debug.Log("Behind Player");
+			ReDropEnemy();
+		}
+
 		DoGravity();
 
 		//Calculate the player details to hand through to the movement systems
@@ -79,11 +87,7 @@ public class EnemyBehavior : MonoBehaviour {
 		//If we're behind the player we should "re-drop" forward of the player somewhere to be an enemy a second time around (same as if we die)
 		//if (PC_FPSController.Instance.gameObject.transform.position.z > gameObject.transform.position.z || gameObject.transform.position.z - PC_FPSController.Instance.gameObject.transform.position.z > 50) {
 		//So we need a smarter way to tell if we're behind our player...
-		//Debug.Log(Vector3.Dot(PC_FPSController.Instance.gameObject.transform.forward, Vector3.Normalize(PC_FPSController.Instance.gameObject.transform.position - gameObject.transform.position)));
 		
-		if (Vector3.Dot(PC_FPSController.Instance.gameObject.transform.forward, Vector3.Normalize(gameObject.transform.position - PC_FPSController.Instance.gameObject.transform.position)) < -0.5f) { 
-			ReDropEnemy();
-		}
 	}
 
 	Vector2 standardizeVector(Vector2 thisVec)
@@ -120,7 +124,7 @@ public class EnemyBehavior : MonoBehaviour {
 			{
 				//We can strike this player
 				HitPlayer();	//Handles our animation
-				playerController.EnemyHitPlayer(gameObject);
+				playerController.EnemyHitPlayer(gameObject, false);
 			}
 		}
 	}
@@ -145,18 +149,26 @@ public class EnemyBehavior : MonoBehaviour {
 
 		if (Time.time < redropTime) { return; }
 
-		//Debug.Log("Doing Enemy redrop");
-		Vector3 dropPoint = Vector3.zero;
-		dropPoint = LevelController.Instance.GetEnemyDropPoint(redropMask);
-		if (dropPoint == Vector3.zero)  //We failed
+		//We want to check and see if we're at our target Zombie Count here too, and this could affect if we respawn
+		if (LevelController.Instance.CheckZombieCount(gameObject))
 		{
-			//Debug.Log("redrop failed");
-			redropTime = Time.time + 3f;    //Give this a rest until later
+			//Debug.Log("Doing Enemy redrop");
+			Vector3 dropPoint = Vector3.zero;
+			dropPoint = LevelController.Instance.GetEnemyDropPoint();
+			if (dropPoint == Vector3.zero)  //We failed
+			{
+				//Debug.Log("redrop failed");
+				redropTime = Time.time + 3f;    //Give this a rest until later
+			}
+			else
+			{
+				RespawnEnemy(dropPoint);
+			}
 		}
 		else
-		{
-			RespawnEnemy(dropPoint);
-		}
+        {
+			//We should be turned off by our level controller
+        }
 	}
 
 	protected virtual void PickZombieStartingState()
@@ -204,7 +216,7 @@ public class EnemyBehavior : MonoBehaviour {
 		gameObject.transform.eulerAngles = new Vector3(0, Random.Range(0f, 360f), 0);
 		bHasStruckPlayer = false;
 		bZombieWaiting = true;
-		attention_radius = attentionRange.GetRandom();
+		attention_radius = attentionRange.GetRandom() * attentionRange.GetRandom();
 		PickZombieStartingState();
 	}
 

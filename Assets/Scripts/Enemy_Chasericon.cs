@@ -34,7 +34,7 @@ public class Enemy_Chasericon : MonoBehaviour {
 			Vector3 widgetLocation = parentEnemy.GetWidgetPosition();
 			//Interesting that they're both inverted
 			ourRect.anchoredPosition = new Vector2(-widgetLocation.x * positionSize.x, -widgetLocation.y * positionSize.y);
-			Debug.Log(widgetLocation.z);
+			//Debug.Log(widgetLocation.z);
 			float closeFrac = fadeCurve.Evaluate(1f - Mathf.Clamp01(widgetLocation.z / fadeDistance));
 			ourRect.sizeDelta = Vector2.one * maxSize * closeFrac;
 			if (widgetLocation.z < strikeDistance)

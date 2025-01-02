@@ -5,16 +5,21 @@ using UnityEngine;
 //A go-to for enemies that will be chasing the player. This promises to get tricky
 public class EnemyBehavior_Chaser : EnemyBehavior {
 
+	[Space]
+	[Header("Chaser Zombie Extras")]
+	public GameObject ChaserIndicatorPrefab;
 	public bool bNeedsRegrounded = true;
 	public bool bIsVirutal = false;
 	public Range runSpeeds = new Range(7f, 15f);
-	public Range rubberbandRanges = new Range(25f, 40f);
-	float rubberbandRange = 30f;
+	public Range rubberbandRange = new Range(12, 40);
 	LayerMask groundLayerMask = 1 << 0; // default layer (0)
+
+	float hitPauseTime = 0; //A ticker to have this enemy slow down after it hits the player, thus "repriming" the strike
+	float hitPauseDuration = 1f; //This'll change to adjust difficulty
+	float runSpeed_slow = 3;
 
 	void Start()
 	{
-		rubberbandRange = rubberbandRanges.GetRandom();
 		characterController = gameObject.GetComponent<CharacterController>();
 		startPosition = gameObject.transform.position;
 		attention_radius = attentionRange.GetRandom();
@@ -63,6 +68,18 @@ public class EnemyBehavior_Chaser : EnemyBehavior {
 		}
 	}
 
+	public override void TriggerStrikePlayer(Collider other)
+	{
+		PC_FPSController playerController = other.gameObject.GetComponent<PC_FPSController>();
+		if (playerController)
+		{
+			//We can strike this player
+			HitPlayer();    //Handles our animation
+			playerController.EnemyHitPlayer(gameObject, true);  //This needs to be a different call
+			hitPauseTime = hitPauseDuration;
+		}
+	}
+
 	public override void DoUpdate()
 	{
 		//Calculate the player details to hand through to the movement systems
@@ -76,8 +93,13 @@ public class EnemyBehavior_Chaser : EnemyBehavior {
 		playerDir = playerDir.normalized;
 
 		//So we could do with a bit of a rubberband to keep the pressure on for the zombies...
-		speed_move = runSpeeds.GetLerp((distToPlayer / rubberbandRange));
-		Debug.Log("speed: " + speed_move);
+		speed_move = runSpeeds.GetLerp((distToPlayer - rubberbandRange.Min) / (rubberbandRange.Max - rubberbandRange.Min));
+		hitPauseTime -= Time.deltaTime;
+		if (hitPauseTime > 0)
+        {
+			speed_move = runSpeed_slow;
+        }
+		//Debug.Log("speed: " + speed_move);
 		if (distToPlayer > attention_radius)
 		{
 			DoVirtualEnemyMove(playerAngle, playerDir);

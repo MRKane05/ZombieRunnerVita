@@ -275,6 +275,7 @@ public class RandomHighwaySpawner : MonoBehaviour {
         }
 
 		string propensityPath = GetPRBPath();   //A probability file!
+		Debug.LogError("Propensity path: " + propensityPath);
 		WriteArrayToBinaryFile(ZombieSpawnValues, sDistance, sWidth, propensityPath);
 		//SaveTextureToFile(ConvertIntArrayToTexture(ZombieSpawnValues), propensityPath);
 	}
@@ -316,6 +317,7 @@ public class RandomHighwaySpawner : MonoBehaviour {
 	//This should be a universal function somewhere as it's used in two different places
 	public string GetPRBPath()
 	{
+		//return Application.dataPath + "/Resources/Propensities/" + gameObject.scene.name + "_props.bin";
 		return Application.streamingAssetsPath + "/Propensities/" + gameObject.scene.name + "_props.bin";
 	}
 

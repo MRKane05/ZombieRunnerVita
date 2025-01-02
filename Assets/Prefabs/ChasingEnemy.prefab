@@ -1107,14 +1107,16 @@ MonoBehaviour:
     Min: 15
     Max: 20
   targetCharacter: {fileID: 114998805192436398}
+  ChaserIndicatorPrefab: {fileID: 1077916675500760, guid: 505240cd5075afb4eb8869aa2654abd9,
+    type: 2}
   bNeedsRegrounded: 1
   bIsVirutal: 0
   runSpeeds:
-    Min: 7
+    Min: 4
     Max: 14
-  rubberbandRanges:
-    Min: 30
-    Max: 30
+  rubberbandRange:
+    Min: 24
+    Max: 120
 --- !u!114 &114998805192436398
 MonoBehaviour:
   m_ObjectHideFlags: 1
