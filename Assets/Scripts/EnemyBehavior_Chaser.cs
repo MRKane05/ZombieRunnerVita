@@ -16,7 +16,7 @@ public class EnemyBehavior_Chaser : EnemyBehavior {
 
 	float hitPauseTime = 0; //A ticker to have this enemy slow down after it hits the player, thus "repriming" the strike
 	float hitPauseDuration = 2f; //This'll change to adjust difficulty
-	float runSpeed_slow = 1;
+	float runSpeed_slow = 1;	//After striking the player how much do we fall back?
 
 	GameObject ourChaserIcon;
 

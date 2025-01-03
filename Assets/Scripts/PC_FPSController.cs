@@ -207,7 +207,6 @@ public class PC_FPSController : MonoBehaviour
         bestTime = pathCreator.path.GetClosestTimeOnPath(gameObject.transform.position);  //This is actually well optimised...
         bestDistance = pathCreator.path.GetClosestDistanceAlongPath(gameObject.transform.position);
         priorPosition = gameObject.transform.position;
-
     }
 
     string currentAnimation = "";
@@ -351,7 +350,7 @@ public class PC_FPSController : MonoBehaviour
         
         if (dodgeTime > 0)  //We're slow and dodging to the side. There's temp invincibility
         {
-            calcMoveSpeed = slowSpeed;
+            calcMoveSpeed = addEffort ? runningSpeed : slowSpeed;   //Add this in so that adding effort when hit will allow us to make tracks
         } else
         {
             //Quick handler for sprinting
