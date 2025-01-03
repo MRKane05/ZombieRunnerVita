@@ -15,8 +15,8 @@ public class EnemyBehavior_Chaser : EnemyBehavior {
 	LayerMask groundLayerMask = 1 << 0; // default layer (0)
 
 	float hitPauseTime = 0; //A ticker to have this enemy slow down after it hits the player, thus "repriming" the strike
-	float hitPauseDuration = 1f; //This'll change to adjust difficulty
-	float runSpeed_slow = 3;
+	float hitPauseDuration = 2f; //This'll change to adjust difficulty
+	float runSpeed_slow = 1;
 
 	GameObject ourChaserIcon;
 
@@ -60,9 +60,11 @@ public class EnemyBehavior_Chaser : EnemyBehavior {
 	}
 
 	//Move our enemy without having to do all the controller movement stuff
-	public void DoVirtualEnemyMove(float playerAngle, Vector3 playerDir)
+	public void DoVirtualEnemyMove(float playerAngle, Vector3 playerDir, float playerDist)
 	{
-		gameObject.transform.position += playerDir * speed_move * Time.deltaTime;  //Just follow our player while we're in virtual
+		Vector3 StrafeDirection = LevelController.Instance.GetEnemyStrafeDirection(gameObject, true);
+		StrafeDirection *= (strafeIntensity * (1f - Mathf.Clamp01(playerDist / 155f)));	//Add a falloff to our strafe intensity
+		gameObject.transform.position += (playerDir + StrafeDirection) * speed_move * Time.deltaTime;  //Just follow our player while we're in virtual
 																					//Lets do a raycast and just plonk our zombie on whatever we hit. Yes this could be a major issue, but for the moment phuckit
 		RaycastHit hit;
 		// Does the ray intersect any objects excluding the player layer
@@ -107,12 +109,26 @@ public class EnemyBehavior_Chaser : EnemyBehavior {
 		//Debug.Log("speed: " + speed_move);
 		if (distToPlayer > attention_radius)
 		{
-			DoVirtualEnemyMove(playerAngle, playerDir);
+			Vector3 StrafeDirection = LevelController.Instance.GetEnemyStrafeDirection(gameObject, true);
+			DoVirtualEnemyMove(playerAngle, playerDir, distToPlayer);
 
 		} else
 		{
 			DoGravity();
-			DoEnemyMove(playerAngle, playerDir);
+			DoEnemyMove(playerAngle, playerDir, distToPlayer, true);
 		}
 	}
+
+	public override void RespawnEnemy(Vector3 thisPos)
+	{
+		gameObject.transform.position = thisPos + Vector3.up * 1.5f;
+		gameObject.transform.eulerAngles = new Vector3(0, Random.Range(0f, 360f), 0);
+		bHasStruckPlayer = false;
+		bZombieWaiting = false;
+		attention_radius = attentionRange.GetRandom() * attentionRange.GetRandom();
+		strafeIntensity = StrafeIntensityRange.GetRandom();
+		//PickZombieStartingState();
+		PickRunState();	//Chaser zombies have only one state, and that's ON
+	}
+
 }

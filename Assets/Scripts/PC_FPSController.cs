@@ -158,6 +158,13 @@ public class PC_FPSController : MonoBehaviour
     Vector3 priorPosition = Vector3.zero;
     Vector3 priorForward = Vector3.forward; //What was our former forward vector?
 
+    //These will be used for calculations pertaining to how our zombies will space themselves out while approaching the player
+    //Terrible form here, but fuckit I'm getting sick of this
+    [HideInInspector]
+    public Vector3 PlayerForward = Vector3.zero;
+    [HideInInspector]
+    public Vector3 PlayerRight = Vector3.zero;
+
 
     void Awake()
 	{
@@ -334,8 +341,8 @@ public class PC_FPSController : MonoBehaviour
     {
         if (bPlayerDead) {return;}
 
-        Vector3 forward = getForwardDirection(); 
-        Vector3 right = Quaternion.AngleAxis(90f, Vector3.up)*forward; 
+        PlayerForward = getForwardDirection(); 
+        PlayerRight = Quaternion.AngleAxis(90f, Vector3.up)* PlayerForward; 
 
         bool addEffort = bAddEffort();
         
@@ -431,7 +438,7 @@ public class PC_FPSController : MonoBehaviour
 
         //PROBLEM: Should clamp the side momentium so that we can't do insaine move speeds. Or just leave it as it is
         float movementDirectionY = moveDirection.y; //A quick save to preserve values
-        moveDirection = (forward * curSpeedX) + (right * curSpeedY);
+        moveDirection = (PlayerForward * curSpeedX) + (PlayerRight * curSpeedY);
         moveDirection.y = movementDirectionY;
 
         characterController.Move(moveDirection * Time.deltaTime);   //Actually do our move
@@ -439,7 +446,7 @@ public class PC_FPSController : MonoBehaviour
         flatMoveDistance = Vector2.Distance(new Vector2(priorPosition.x, priorPosition.z), new Vector2(transform.position.x, transform.position.z));
         priorPosition = gameObject.transform.position; //Reset this so that we get a read for the next tick
         //We'd be wise to align our character to the movement direction here too (as it'll fix forward issues)
-        gameObject.transform.LookAt(gameObject.transform.position + forward * 3f, Vector3.up);
+        gameObject.transform.LookAt(gameObject.transform.position + PlayerForward * 3f, Vector3.up);
     }
 
     //The jump direction in this case is for jumping off a wall. We'll get to that

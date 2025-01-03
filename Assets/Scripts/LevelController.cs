@@ -49,12 +49,15 @@ public class LevelController : MonoBehaviour {
 
 	public int maxZombies = 6;	//What's the maximum number of zombies we'll have?
 	public int startingZombies = 3; //How many zombies do we start with?
+	public int maxChaserZombies = 3;    //What's the maximum number of chasers we can have in this level
+	public float zombieBecomeChaserChance = 0.125f; //1 == every zombie becomes a chaser
 	public Range StartZombieDelays = new Range(0f, 5f);
 	public AnimationCurve ZombieDensityCurve = new AnimationCurve(new Keyframe(0f, 1f), new Keyframe(1f, 1f));	//To control the distribution of zombies throughout the run
 	public GameObject ZombiePrefab; //This'll need expanded. It's getting what it gets for the moment
 	public LayerMask zombieDropMask;
+	public GameObject ChaserZombiePrefab;
 	public List<LevelZombie> SpawnedZombies = new List<LevelZombie>();
-	public List<GameObject> SpawnedChasers = new List<GameObject>();
+	public List<LevelZombie> SpawnedChasers = new List<LevelZombie>();
 
 	void Awake()
 	{
@@ -92,6 +95,20 @@ public class LevelController : MonoBehaviour {
         }
 		return activeZombies;
     }
+
+	public int GetActiveZombieChaserCount()
+	{
+		int activeZombies = 0;
+		foreach (LevelZombie thisZombie in SpawnedChasers)
+		{
+			if (thisZombie.ZombieState == LevelZombie.enZombieState.PENDING || thisZombie.ZombieState == LevelZombie.enZombieState.ENABLED)
+			{
+				activeZombies++;
+			}
+		}
+		return activeZombies;
+	}
+
 	public LevelZombie GetLevelZombieByObject(GameObject thisZombieGO)
     {
 		foreach (LevelZombie thisLevelZombie in SpawnedZombies)
@@ -109,7 +126,7 @@ public class LevelController : MonoBehaviour {
     {
 		LevelZombie thisLevelZombie = GetLevelZombieByObject(checkingZombie);
 		//Of course if the above has failed then we've got an issue and should complain about it. A lot.
-		if (thisLevelZombie== null)
+		if (thisLevelZombie == null)
         {
 			Debug.LogError("Unable to get LevelZombie reference for " + checkingZombie.name);
         }
@@ -173,6 +190,36 @@ public class LevelController : MonoBehaviour {
         }
     }
 
+	IEnumerator DelayPlaceChaser(float spawnDelay, Vector3 dropPoint)
+    {
+		Debug.Log("Adding Chaser Zombie");
+		//We need to find a free zombie to use for this
+		LevelZombie thisZombie = null;
+		foreach(LevelZombie newZombie in SpawnedChasers)
+        {
+			if (newZombie.ZombieState == LevelZombie.enZombieState.DISABLED || newZombie.ZombieState == LevelZombie.enZombieState.NULL)
+            {
+				newZombie.ZombieState = LevelZombie.enZombieState.PENDING;
+				thisZombie = newZombie;
+				break;
+            }
+        }
+
+		if (thisZombie != null)
+		{
+			//Prepare our zombie
+			thisZombie.SetActive(false);
+			thisZombie.ZombieState = LevelZombie.enZombieState.PENDING;
+
+			//Do our delay
+			yield return new WaitForSeconds(spawnDelay);
+
+			//Set things in action
+            thisZombie.SetActive(true);
+			thisZombie.Zombie.GetComponent<EnemyBehavior>().RespawnEnemy(dropPoint);
+		}
+    }
+
 	//Wait for a duration and then place a zombie on the road. This is used to stratify zombies as the player encounters them
 	IEnumerator DelayPlaceZombie(float spawnDelay, LevelZombie thisZombie)
     {
@@ -197,9 +244,37 @@ public class LevelController : MonoBehaviour {
 			{
 				//Place the enemy at this dropPoint
 				thisZombie.SetActive(true);
+				
 				thisZombie.Zombie.GetComponent<EnemyBehavior>().RespawnEnemy(dropPoint);
+
 				bValidSpawn = true;
 			}
+		}
+	}
+
+	public void TestForChaserZombie(GameObject thisZombie)
+    {
+		//So this is a great point to assess if we're going to turn this "zombie" into a chaser
+		if (Random.value < zombieBecomeChaserChance && GetActiveZombieChaserCount() < maxChaserZombies)
+		{
+			Debug.Log("Calling add Chaser Zombie");
+			//We want to drop a chaser in where this zombie was before the zombie is moved
+			StartCoroutine(DelayPlaceChaser(Random.Range(0.5f, 2f), thisZombie.transform.position));
+		}
+	}
+
+	public void SpawnChaserZombies()
+	{
+		Debug.Log("Doing Chaser Zombie Spawn Loop");
+		//spawn all the zombies that'll be used in this level
+		for (int i = 0; i < maxChaserZombies; i++)
+		{
+			GameObject newZombie = Instantiate(ChaserZombiePrefab);
+			newZombie.SetActive(false);
+			LevelZombie newLevelZombie = new LevelZombie(); //Gawd. Look at this line. I'm almost as good at writing lyrics as Slim Shady
+			newLevelZombie.Zombie = newZombie;
+			newLevelZombie.SetActive(false); //turn this reference off to begin with.
+			SpawnedChasers.Add(newLevelZombie);
 		}
 	}
 
@@ -248,6 +323,7 @@ public class LevelController : MonoBehaviour {
 		//Logically we'll have some sort of opening. But for the moment we're getting things onto the floor so lets just jump straight into the game
 		setTimescale(1f);
 		SpawnLevelZombies();
+		SpawnChaserZombies();
 		levelPlayState = enLevelPlayState.PLAYING;
     }
 	#endregion
@@ -385,9 +461,9 @@ public class LevelController : MonoBehaviour {
 				
 				float alphaValue = zombiePropTable[distancePos, widthPos];
 				//For the moment let's just roll with 0-1 for the values
-				if (alphaValue>0.5f)	//We've got an acceptable point to drop our zombie down :)
+				if (alphaValue > 0.5f)	//We've got an acceptable point to drop our zombie down :)
                 {
-					Debug.Log("Drop Position: (" + distancePos + ", " + widthPos + ")");
+					//Debug.Log("Drop Position: (" + distancePos + ", " + widthPos + ")");
 					bFoundDropPoint = true; //Yay!
 											//We need to do a raycast to find the proper drop position for our Zombie
 					RaycastHit hit;
@@ -498,6 +574,49 @@ public class LevelController : MonoBehaviour {
         {
 
         }
+    }
+    #endregion
+
+    #region Enemy Helper Functions
+	public Vector3 GetEnemyStrafeDirection(GameObject thisEnemy, bool bIsChaser)
+    {
+		float intendedSpacing = 1f;
+		//Basically I want to somehow have Enemies "Spread out" instead of going straight in for the player
+		//Start by collapsing our positions along the "curve forward" axis
+		//Then compare our position within the stack of the different enemies so that we can space ourselves out
+		float DistanceSum = 0;
+		if (!bIsChaser)
+		{
+			foreach (LevelZombie thisZombie in SpawnedZombies)
+			{
+				if (thisZombie.ZombieState == LevelZombie.enZombieState.ENABLED)
+				{
+					//We want a function where the closer we are to something the more we repel from them
+					float flatDistance = Vector3.Dot(PC_FPSController.Instance.PlayerRight, thisEnemy.transform.position - thisZombie.Zombie.transform.position);
+					flatDistance /= intendedSpacing;
+					//At this stage we've still got a direction here, but we need to know how much based off of our sphere of infulence
+					float flatPow = Mathf.Clamp01(Mathf.Abs(1f - flatDistance));    //Get the magnitude of our distance and clamp01
+					DistanceSum += Mathf.Sign(flatDistance) * flatPow;
+				}
+			}
+		} else
+        {
+			foreach (LevelZombie thisZombie in SpawnedChasers)
+			{
+				if (thisZombie.ZombieState == LevelZombie.enZombieState.ENABLED)
+				{
+					//Sadly our prior approach won't work for the chasers while in virtual...
+					
+					float flatDistance = Vector3.Dot(PC_FPSController.Instance.PlayerRight, thisEnemy.transform.position - thisZombie.Zombie.transform.position);
+					flatDistance /= intendedSpacing;
+					//At this stage we've still got a direction here, but we need to know how much based off of our sphere of infulence
+					float flatPow = Mathf.Clamp01(Mathf.Abs(1f - flatDistance));    //Get the magnitude of our distance and clamp01
+					DistanceSum += Mathf.Sign(flatDistance) * flatPow;
+				}
+			}
+		}
+
+		return PC_FPSController.Instance.PlayerRight * DistanceSum;	//This could be all sorts of wacky
     }
     #endregion
 }

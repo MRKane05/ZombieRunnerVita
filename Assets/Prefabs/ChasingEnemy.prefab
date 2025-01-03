@@ -770,7 +770,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1328235799384942}
   m_LocalRotation: {x: -0, y: -0.97403747, z: -0, w: -0.2263869}
-  m_LocalPosition: {x: -31.3, y: 14.46, z: -82.8}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4651596692316588}
@@ -1107,6 +1107,9 @@ MonoBehaviour:
     Min: 15
     Max: 20
   targetCharacter: {fileID: 114998805192436398}
+  StrafeIntensityRange:
+    Min: 0.2
+    Max: 0.4
   ChaserIndicatorPrefab: {fileID: 1077916675500760, guid: 505240cd5075afb4eb8869aa2654abd9,
     type: 2}
   bNeedsRegrounded: 1

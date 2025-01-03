@@ -26,10 +26,13 @@ public class EnemyBehavior : MonoBehaviour {
 	protected Vector3 startPosition = Vector3.zero;
 
 	float redropTime = 0;
-	bool bZombieWaiting = true;
+	protected bool bZombieWaiting = true;
 
 	protected Vector3 playerDir = Vector3.zero;
 	protected float distToPlayer = 100f;
+
+	public Range StrafeIntensityRange = new Range(0.05f, 0.1f);
+	protected float strafeIntensity = 0.05f;
 
 	void Start() {
 		characterController = gameObject.GetComponent<CharacterController>();
@@ -81,7 +84,7 @@ public class EnemyBehavior : MonoBehaviour {
 
 		if (!bZombieWaiting)
 		{
-			DoEnemyMove(playerAngle, playerDir);  //Move our enemy towards our player
+			DoEnemyMove(playerAngle, playerDir, distToPlayer, false);  //Move our enemy towards our player
 		}
 		//PickEnemyFrame(); //Our enemies will play a "grab" animation when they're close
 		//If we're behind the player we should "re-drop" forward of the player somewhere to be an enemy a second time around (same as if we die)
@@ -162,7 +165,8 @@ public class EnemyBehavior : MonoBehaviour {
 			}
 			else
 			{
-				RespawnEnemy(dropPoint);
+				LevelController.Instance.TestForChaserZombie(gameObject);   //See if we become a chaser
+				RespawnEnemy(dropPoint);				
 			}
 		}
 		else
@@ -211,12 +215,13 @@ public class EnemyBehavior : MonoBehaviour {
         }
     }
 
-	public void RespawnEnemy(Vector3 thisPos) {
+	public virtual void RespawnEnemy(Vector3 thisPos) {
 		gameObject.transform.position = thisPos + Vector3.up * 1.5f;
 		gameObject.transform.eulerAngles = new Vector3(0, Random.Range(0f, 360f), 0);
 		bHasStruckPlayer = false;
 		bZombieWaiting = true;
 		attention_radius = attentionRange.GetRandom() * attentionRange.GetRandom();
+		strafeIntensity = StrafeIntensityRange.GetRandom();
 		PickZombieStartingState();
 	}
 
@@ -232,7 +237,7 @@ public class EnemyBehavior : MonoBehaviour {
 		}
 	}
 
-	public virtual void DoEnemyMove(float playerAngle, Vector3 playerDir)
+	public virtual void DoEnemyMove(float playerAngle, Vector3 playerDir, float distToPlayer, bool bIsChaser)
 	{
 
 		//It's actually a little pointless to have these different speeds as the player doesn't get to see it
@@ -241,7 +246,18 @@ public class EnemyBehavior : MonoBehaviour {
 		Vector3 moveDirection = playerDir * moveSpeed;  //Get the net of how we should be ambling
 
 		moveDirection.y = EnemyFallSpeed;
-		characterController.Move(moveDirection * Time.deltaTime);   //Actually do our move
+		//We could do with having a function to make our zombies spread out from each other so that they don't end up clustering
+		//This needs to be different if we're chaser zombies...
+		Vector3 StrafeDirection = LevelController.Instance.GetEnemyStrafeDirection(gameObject, bIsChaser);
+		if (!bIsChaser)
+		{
+			StrafeDirection *= Mathf.Lerp(0, strafeIntensity, distToPlayer / 30f);  //Some graduation to lessen the strength of the effect. Of course we could also do with a proximity function here too
+		} else
+        {
+			Debug.Log(StrafeDirection);	//Naturally this isn't working as intended...
+        }
+
+		characterController.Move((moveDirection + StrafeDirection) * Time.deltaTime);   //Actually do our move
 																	//We need to point our enemy at our player
 																	//This isn't good enough for our direction. While I don't feel we need pathfinding we do need enemies that don't operate like turrets
 																	//gameObject.transform.LookAt(PC_FPSController.Instance.gameObject.transform.position, Vector3.up);

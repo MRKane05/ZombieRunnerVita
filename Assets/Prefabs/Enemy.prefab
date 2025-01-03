@@ -756,7 +756,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1192548015709004}
   m_LocalRotation: {x: -0, y: -0.97403747, z: -0, w: -0.2263869}
-  m_LocalPosition: {x: -33.3, y: 31.57, z: -45.4}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4446208826276138}
@@ -1152,7 +1152,9 @@ MonoBehaviour:
   speed_amble: 4
   bHasStruckPlayer: 0
   dash_radius: 7
-  attention_radius: 15
+  attentionRange:
+    Min: 7
+    Max: 15
   targetCharacter: {fileID: 114627634761146358}
 --- !u!135 &135114418881591552
 SphereCollider:
