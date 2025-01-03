@@ -679,12 +679,21 @@ public class PC_FPSController : MonoBehaviour
         //This needs to put in place a hit effect, and also a speed penalty
         if (!bHitByChaser)
         {
-            //Essentially this is a "stumble"
-            stumbleTime = stumbleMax;
-            boostTime = 0; //Getting hit cancels our bost
-            setCurrentAnimation("Hit_Left");    //Our hits need a special handler as technically they're grounded
-            health -= 10f;
-        } else
+            if (dodgeTime <= 0)
+            {
+                //Essentially this is a "stumble"
+                stumbleTime = stumbleMax;
+                boostTime = 0; //Getting hit cancels our bost
+                setCurrentAnimation("Hit_Left");    //Our hits need a special handler as technically they're grounded
+                health -= 10f;
+            } else
+            {
+                //Don't suffer a slowdown
+                health -= 3f; //take some chip damage
+            }
+        } 
+
+        if (bHitByChaser)
         {
             boostTime = 0.125f; //Give the player a boost when they're clobbered. This mightn't be the right way of going about this...
             setCurrentAnimation("Hit_Behind");    //Our hits need a special handler as technically they're grounded
