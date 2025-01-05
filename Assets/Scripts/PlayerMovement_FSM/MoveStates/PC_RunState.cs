@@ -27,9 +27,6 @@ public class PC_RunState : PC_BaseState {
 #endif
 			}
         }
-
-
-
 		CheckSwitchState();
 	}
 

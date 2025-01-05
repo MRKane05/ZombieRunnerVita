@@ -9,6 +9,8 @@ public class EnemyBehavior : MonoBehaviour {
 	public float speed_amble = 6f;
 	protected float speed_move = 0f;
 
+	public GameObject target; //What is our zombie interested in?
+
 	[HideInInspector]
 	public bool bHasStruckPlayer = false;
 
@@ -39,9 +41,20 @@ public class EnemyBehavior : MonoBehaviour {
 		startPosition = gameObject.transform.position;
 		attention_radius = attentionRange.GetRandom() * attentionRange.GetRandom();
 		PickZombieStartingState();
+		target = PC_FPSController.Instance.gameObject;
 	}
 
+	public void setTarget(GameObject newTarget)
+    {
+		target = newTarget;
+    }
+
 	public void Update() {
+		//We need to check that our targets are valid before running through with this commandset
+		if (target == null)
+        {
+			target = target = PC_FPSController.Instance.gameObject;
+		}
 		DoUpdate();
 	}
 
@@ -59,7 +72,7 @@ public class EnemyBehavior : MonoBehaviour {
 		//Calculate the player details to hand through to the movement systems
 		Vector3 forward = transform.TransformDirection(Vector3.forward);
 		Vector3 right = transform.TransformDirection(Vector3.right);
-		playerDir = PC_FPSController.Instance.gameObject.transform.position - gameObject.transform.position;
+		playerDir = target.transform.position - gameObject.transform.position;
 		distToPlayer = playerDir.sqrMagnitude;
 
 		//Really we should piggyback our screen position information here too
@@ -93,8 +106,17 @@ public class EnemyBehavior : MonoBehaviour {
 		
 	}
 
+	Vector2 behindStandardizedVector (Vector2 thisVec)
+    {
+		//thisVec = thisVec.normalized;
+		//We're expecting that this will always be behind us
+		float factor = Mathf.Abs(thisVec.y);
+		return new Vector2(Mathf.Clamp(thisVec.x / factor, -1f, 1f), 1f);
+    }
+
 	Vector2 standardizeVector(Vector2 thisVec)
     {
+		//thisVec = thisVec.normalized;
 		Vector2 localVec = Vector2.zero;
 		if (Mathf.Abs(thisVec.x) > Mathf.Abs(thisVec.y))
         {
@@ -112,10 +134,27 @@ public class EnemyBehavior : MonoBehaviour {
 
 	public virtual Vector3 GetWidgetPosition()
     {
+		/*
+		playerDir = target.transform.position - gameObject.transform.position;
+		distToPlayer = playerDir.sqrMagnitude; 
+		 
 		Vector3 localPlayerDir = Camera.main.transform.InverseTransformDirection(playerDir);
 		Vector2 flatPlayerDir = new Vector2(localPlayerDir.x, localPlayerDir.z);
 		flatPlayerDir = standardizeVector(flatPlayerDir);   //This could be problematic as we don't want normalized, we want standardized...
 		return new Vector3(flatPlayerDir.x, flatPlayerDir.y, distToPlayer);
+		*/
+		Vector3 playerDirection = (PC_FPSController.Instance.transform.position - gameObject.transform.position);
+		float playerDistance = playerDirection.sqrMagnitude;
+		//Debug.Log(playerDistance);
+		//playerDirection = playerDirection.normalized;
+
+		//Vector3 localPlayerDir = Camera.main.transform.InverseTransformDirection(playerDirection);
+		Vector3 localPlayerDir = Camera.main.transform.InverseTransformPoint(gameObject.transform.position);
+		//Debug.Log(localPlayerDir);
+		Vector2 flatPlayerDir = new Vector2(localPlayerDir.x, localPlayerDir.z);
+		flatPlayerDir = behindStandardizedVector(flatPlayerDir);   //This could be problematic as we don't want normalized, we want standardized...
+		//Debug.Log(flatPlayerDir);
+		return new Vector3(flatPlayerDir.x, flatPlayerDir.y, playerDistance);
     }
 
 	public virtual void TriggerStrikePlayer(Collider other)
@@ -222,6 +261,7 @@ public class EnemyBehavior : MonoBehaviour {
 		bZombieWaiting = true;
 		attention_radius = attentionRange.GetRandom() * attentionRange.GetRandom();
 		strafeIntensity = StrafeIntensityRange.GetRandom();
+		target = PC_FPSController.Instance.gameObject;
 		PickZombieStartingState();
 	}
 
@@ -249,13 +289,8 @@ public class EnemyBehavior : MonoBehaviour {
 		//We could do with having a function to make our zombies spread out from each other so that they don't end up clustering
 		//This needs to be different if we're chaser zombies...
 		Vector3 StrafeDirection = LevelController.Instance.GetEnemyStrafeDirection(gameObject, bIsChaser);
-		if (!bIsChaser)
-		{
-			StrafeDirection *= Mathf.Lerp(0, strafeIntensity, distToPlayer / 30f);  //Some graduation to lessen the strength of the effect. Of course we could also do with a proximity function here too
-		} else
-        {
-			Debug.Log(StrafeDirection);	//Naturally this isn't working as intended...
-        }
+		StrafeDirection *= Mathf.Lerp(0, strafeIntensity, distToPlayer / 30f);  //Some graduation to lessen the strength of the effect. Of course we could also do with a proximity function here too
+		StrafeDirection = Vector3.zero;
 
 		characterController.Move((moveDirection + StrafeDirection) * Time.deltaTime);   //Actually do our move
 																	//We need to point our enemy at our player

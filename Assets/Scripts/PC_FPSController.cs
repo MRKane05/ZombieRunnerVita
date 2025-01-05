@@ -165,6 +165,8 @@ public class PC_FPSController : MonoBehaviour
     [HideInInspector]
     public Vector3 PlayerRight = Vector3.zero;
 
+    public GameObject distractionPrefab; //Just something to get us going
+
 
     void Awake()
 	{
@@ -660,7 +662,21 @@ public class PC_FPSController : MonoBehaviour
         playerAnimator.transform.localPosition = Vector3.Lerp(playerAnimator.transform.localPosition, Vector3.zero, Time.deltaTime);
         playerAnimator.transform.localRotation = Quaternion.Slerp(playerAnimator.transform.localRotation, Quaternion.identity, Time.deltaTime);
 
+        if (Input.GetMouseButtonDown(0) || Input.GetButtonDown("Right Shoulder"))
+        {
+            ThrowSelectedItem();
+        }
 
+    }
+
+    void ThrowSelectedItem()
+    {
+        GameObject newThrownItem = Instantiate(distractionPrefab, Camera.main.transform.position + Camera.main.transform.forward * 1.5f, Quaternion.identity);
+        //we need to give our thrown item some force
+        Rigidbody newRB = newThrownItem.GetComponent<Rigidbody>();
+        float throwForce = 750f;
+        float lobForce = 150f;
+        newRB.AddForce(Camera.main.transform.forward * throwForce + Vector3.up * lobForce);
     }
 
     void AdjustFollowDisplay() {

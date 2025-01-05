@@ -92,8 +92,11 @@ public class EnemyBehavior_Chaser : EnemyBehavior {
 		//Calculate the player details to hand through to the movement systems
 		Vector3 forward = transform.TransformDirection(Vector3.forward);
 		Vector3 right = transform.TransformDirection(Vector3.right);
-		playerDir = PC_FPSController.Instance.gameObject.transform.position - gameObject.transform.position;
+		playerDir = target.transform.position - gameObject.transform.position;
 		distToPlayer = playerDir.sqrMagnitude;
+
+		//At some point we've got to get so far behind our player that we give up
+		//Alternatively there's got to be a point where we're sick of chasing our player and we give up
 
 		float playerAngle = Mathf.Atan2(playerDir.x, playerDir.z);
 		playerDir.y = 0; //Flatten our movement so we don't fly...
@@ -127,6 +130,7 @@ public class EnemyBehavior_Chaser : EnemyBehavior {
 		bZombieWaiting = false;
 		attention_radius = attentionRange.GetRandom() * attentionRange.GetRandom();
 		strafeIntensity = StrafeIntensityRange.GetRandom();
+		target = PC_FPSController.Instance.gameObject;
 		//PickZombieStartingState();
 		PickRunState();	//Chaser zombies have only one state, and that's ON
 	}

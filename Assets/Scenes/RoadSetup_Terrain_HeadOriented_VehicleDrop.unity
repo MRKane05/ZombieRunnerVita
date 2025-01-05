@@ -14,7 +14,7 @@ OcclusionCullingSettings:
 RenderSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 9
-  m_Fog: 0
+  m_Fog: 1
   m_FogColor: {r: 0, g: 0, b: 0, a: 1}
   m_FogMode: 3
   m_FogDensity: 0.075
@@ -7576,6 +7576,8 @@ MonoBehaviour:
   bestDistance: 0
   PlayerForward: {x: 0, y: 0, z: 0}
   PlayerRight: {x: 0, y: 0, z: 0}
+  distractionPrefab: {fileID: 1722265234605872, guid: 0680ad216cf41324aa3b8ed59eaf3efb,
+    type: 2}
 --- !u!1 &515659556
 GameObject:
   m_ObjectHideFlags: 0
@@ -9825,7 +9827,7 @@ MonoBehaviour:
   maxZombies: 6
   startingZombies: 3
   maxChaserZombies: 3
-  zombieBecomeChaserChance: 1
+  zombieBecomeChaserChance: 0.5
   StartZombieDelays:
     Min: 0
     Max: 5
@@ -22328,7 +22330,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1414371257
 RectTransform:
   m_ObjectHideFlags: 0
@@ -22354,13 +22356,14 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1414371256}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e3758240b9f4d3849be51fb1f25a7585, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   DebugLogText: {fileID: 942340029}
   TextLog: 
+  bDisplayActive: 0
 --- !u!1 &1422584192
 GameObject:
   m_ObjectHideFlags: 0

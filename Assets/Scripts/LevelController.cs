@@ -71,15 +71,18 @@ public class LevelController : MonoBehaviour {
 		instance = this;
 
 		string PBRPath = GetPRBPath();
+		/*
+		string PBRPath = GetPRBPath();
 		if (File.Exists(PBRPath))
 		{
 			ReadArrayFromBinaryFile(PBRPath);
 			//ReadArrayFromResourcesBinaryFile();
-
+			return Vector3.zero;
 		} else
 		{
-			Debug.LogError("No propensity file for this level! " + PBRPath);
-		}
+			Debug.LogError("No PBR file found at: " + PBRPath);
+		}*/
+		ReadArrayFromResourcesBinaryFile();
 
 		setPlayState(enLevelPlayState.START); //Prepare our start functionality stuff
 	}
@@ -132,7 +135,7 @@ public class LevelController : MonoBehaviour {
         }
 		int ActiveZombies = GetActiveZombieCount();
 		int TargetZombies = GetTargetZombieCount();
-		Debug.Log("Active: " + ActiveZombies + " Target: " + TargetZombies);
+		//Debug.Log("Active: " + ActiveZombies + " Target: " + TargetZombies);
 		if (ActiveZombies == TargetZombies)
         {
 			return true;
@@ -340,19 +343,21 @@ public class LevelController : MonoBehaviour {
     //This should be a universal function somewhere as it's used in two different places
     public string GetPRBPath()
 	{
+		/*
 #if !UNITY_EDITOR
 		//return "ux0:app/VHZR12345/Media/Resources/" + gameObject.scene.name + "_props.bin";
 		return "ux0:app/VHZR12345/Media/StreamingAssets/Propensities/" + gameObject.scene.name + "_props.bin";
-#endif
+#endif*/
 		//return Application.streamingAssetsPath + "/Propensities/" + gameObject.scene.name + "_props.bin";
-		return Application.dataPath + "/StreamingAssets/Propensities/" + gameObject.scene.name + "_props.bin";
+		return Application.streamingAssetsPath + "/" + gameObject.scene.name + "_props.bin";
+		//return Application.dataPath + "/StreamingAssets/Propensities/" + gameObject.scene.name + "_props.bin";
 		//return Application.dataPath + "/Resources/" + gameObject.scene.name + "_props.bin";
 	}
 
 	public void ReadArrayFromResourcesBinaryFile()
     {
-		try
-		{
+		//try
+		//{
 			TextAsset asset = Resources.Load(gameObject.scene.name + "_props") as TextAsset;
 
 			Stream s = new MemoryStream(asset.bytes);
@@ -377,12 +382,12 @@ public class LevelController : MonoBehaviour {
 
 			Debug.Log("Zombie Prop Array successfully read from binary file.");
 			bHasPropensityFile = true;
-
+		/*
 		}
 		catch (System.Exception e)
 		{
 			Debug.LogError("Error reading zombie prop array from binary file from resources: " + e.Message);
-		}
+		}*/
 	}
 
 	// Function to read the array and dimensions from a binary file
@@ -428,10 +433,19 @@ public class LevelController : MonoBehaviour {
 		if (!bHasPropensityFile)
         {
 			Debug.Log("No propensity file loaded");
-			//Debug.Log(GetPRBPath());
+			/*
+			string PBRPath = GetPRBPath();
+			if (File.Exists(PBRPath))
+			{
+				ReadArrayFromBinaryFile(PBRPath);
+				//ReadArrayFromResourcesBinaryFile();
+				return Vector3.zero;
+			} else
+			{
+				Debug.LogError("No PBR file found at: " + PBRPath);
+			}*/
 			ReadArrayFromResourcesBinaryFile();
-			return Vector3.zero;
-        }
+		}
 		//So for this we're going to need our player distance for our curve...
 		int rowDistance = Mathf.RoundToInt(PC_FPSController.Instance.bestDistance); //This'll be in metres. We're pretty fine :)
 		
@@ -618,5 +632,33 @@ public class LevelController : MonoBehaviour {
 
 		return PC_FPSController.Instance.PlayerRight * DistanceSum;	//This could be all sorts of wacky
     }
+
+	public void TriggerDistraction(GameObject distraction, float radius, float effectiveness)
+    {
+		//Basically we need to go through our zombies and see if they're getting assigned to this as a target
+		foreach (LevelZombie thisZombie in SpawnedZombies)
+        {
+			if (Vector3.SqrMagnitude(distraction.transform.position-thisZombie.Zombie.transform.position) < radius)
+            {
+				if (Random.value < effectiveness)	//Distract this enemy
+                {
+					Debug.Log("Enemy Distracted");
+					thisZombie.Zombie.GetComponent<EnemyBehavior>().setTarget(distraction);
+                }
+            }
+        }
+
+		foreach (LevelZombie thisZombie in SpawnedChasers)
+		{
+			if (Vector3.SqrMagnitude(distraction.transform.position - thisZombie.Zombie.transform.position) < radius)
+			{
+				if (Random.value < effectiveness)   //Distract this enemy
+				{
+					Debug.Log("Chaser Distracted");
+					thisZombie.Zombie.GetComponent<EnemyBehavior>().setTarget(distraction);
+				}
+			}
+		}
+	}
     #endregion
 }
