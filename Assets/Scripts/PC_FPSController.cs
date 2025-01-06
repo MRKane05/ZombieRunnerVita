@@ -166,7 +166,7 @@ public class PC_FPSController : MonoBehaviour
     public Vector3 PlayerRight = Vector3.zero;
 
     public GameObject distractionPrefab; //Just something to get us going
-
+    AudioSource ourAudio;   //The players audio source
 
     void Awake()
 	{
@@ -187,6 +187,8 @@ public class PC_FPSController : MonoBehaviour
         {
             yield return null; //Wait for everything to be setup
         }
+
+        ourAudio = gameObject.GetComponent<AudioSource>();
         states = new PC_MoveStateFactory(this);
         // currentState = states.EnemyNullState();
         Func<PC_BaseState>[] allStates = new Func<PC_BaseState>[] { states.PCNullState, states.PCRunState, states.PCAirbourne, states.PCWallKick, states.PCMantleState, states.PCWallRunState };
@@ -796,6 +798,27 @@ public class PC_FPSController : MonoBehaviour
             //Debug.Log("Collided with object" + other.gameObject.name);
             // Additional logic for handling the trigger
             bClimbing = false;
+        }
+    }
+    #endregion
+
+    #region Animation Callbacks
+    public void DoFootstepSound()
+    {
+        //We need to figure out what we're standing on, but for the moment lets just make a step noise
+        //For the moment...
+        //Debug.Log(groundObject.tag);
+        if (groundObject.GetComponent<Terrain>() != null) //We're in the grass!
+        {
+            ourAudio.PlayOneShot(MasterAudioBank.Instance.GetRandomFootfallSound(MasterAudioBank.enFootfallSubstrate.PAVEMENT));
+        }
+        else if (groundObject.tag == "Clutter")
+        {     //We're probably on cars
+            ourAudio.PlayOneShot(MasterAudioBank.Instance.GetRandomFootfallSound(MasterAudioBank.enFootfallSubstrate.METAL));
+        }
+        else
+        {
+            ourAudio.PlayOneShot(MasterAudioBank.Instance.GetRandomFootfallSound(MasterAudioBank.enFootfallSubstrate.PAVEMENT));
         }
     }
     #endregion

@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class EnemyBehavior : MonoBehaviour {
 
+	public enum enZombieClass { NULL, STANDARD, CHASER }
+	public enZombieClass ZombieClass = enZombieClass.STANDARD;
+
 	public LayerMask redropMask;
 	public float speed_walk = 3f;
 	public float speed_amble = 6f;
@@ -28,7 +31,7 @@ public class EnemyBehavior : MonoBehaviour {
 	protected Vector3 startPosition = Vector3.zero;
 
 	float redropTime = 0;
-	protected bool bZombieWaiting = true;
+	public bool bZombieWaiting = true;
 
 	protected Vector3 playerDir = Vector3.zero;
 	protected float distToPlayer = 100f;
@@ -36,12 +39,27 @@ public class EnemyBehavior : MonoBehaviour {
 	public Range StrafeIntensityRange = new Range(0.05f, 0.1f);
 	protected float strafeIntensity = 0.05f;
 
+	public Range GroanInterval = new Range(1f, 3f);
+	public Range GroanPitchRange = new Range(0.8f, 1.2f); //Just to add some sound variance
+	protected float groanPitch;
+	protected float nextGroanTime = 0;
+
+	public List<AudioClip> ZombieNoticedSounds = new List<AudioClip>();
+	public List<AudioClip> ZombieIdleSounds = new List<AudioClip>();
+	public List<AudioClip> ZombieSounds = new List<AudioClip>();
+	protected AudioSource ourAudio;
+
+	public float footfallFrequency = 0.4f;// Should be about correct for the footfalls. Probably needs some random
+	float nextFootfallTime = 0;
+
 	void Start() {
 		characterController = gameObject.GetComponent<CharacterController>();
 		startPosition = gameObject.transform.position;
 		attention_radius = attentionRange.GetRandom() * attentionRange.GetRandom();
 		PickZombieStartingState();
 		target = PC_FPSController.Instance.gameObject;
+		ourAudio = gameObject.GetComponent<AudioSource>();
+		groanPitch = GroanPitchRange.GetRandom();
 	}
 
 	public void setTarget(GameObject newTarget)
@@ -49,7 +67,61 @@ public class EnemyBehavior : MonoBehaviour {
 		target = newTarget;
     }
 
+	void playFootfallSound()
+    {
+		if (!bZombieWaiting)
+        {
+			if (Time.time > nextFootfallTime)
+            {
+				nextFootfallTime = Time.time + footfallFrequency;
+				ourAudio.PlayOneShot(MasterAudioBank.Instance.GetRandomFootfallSound(MasterAudioBank.enFootfallSubstrate.PAVEMENT));
+			}
+        }
+    }
+
+	void PlayZombieNoticeSound()
+    {
+		if (ZombieNoticedSounds.Count > 0)
+		{
+			int RandomSound = Random.Range(0, ZombieNoticedSounds.Count);
+			nextGroanTime = Mathf.Max(Time.time + GroanInterval.GetRandom(), ZombieNoticedSounds[RandomSound].length + 0.75f); //Make sure we don't double up our clips
+			ourAudio.pitch = groanPitch;
+			ourAudio.PlayOneShot(ZombieNoticedSounds[RandomSound]);
+		}
+	}
+
+	public virtual void checkMakeSound()
+    {
+		if (!ourAudio) { return; }
+
+		if (Time.time > nextGroanTime)
+		{
+			if (bZombieWaiting)	//This idle sound really isn't working
+			{
+				if (ZombieIdleSounds.Count > 0)
+				{
+					int RandomSound = Random.Range(0, ZombieIdleSounds.Count);
+					nextGroanTime = Mathf.Max(Time.time + GroanInterval.GetRandom(), ZombieIdleSounds[RandomSound].length + 0.75f); //Make sure we don't double up our clips
+					ourAudio.pitch = groanPitch;
+					ourAudio.PlayOneShot(ZombieIdleSounds[RandomSound]);
+				}
+			}
+			else
+			{
+				if (ZombieSounds.Count > 0)
+				{
+					int RandomSound = Random.Range(0, ZombieSounds.Count);
+					nextGroanTime = Mathf.Max(Time.time + GroanInterval.GetRandom(), ZombieSounds[RandomSound].length + 0.75f); //Make sure we don't double up our clips
+					ourAudio.pitch = groanPitch;
+					ourAudio.PlayOneShot(ZombieSounds[RandomSound]);
+				}
+			}
+		}
+    }
+
 	public void Update() {
+		checkMakeSound();
+		playFootfallSound();
 		//We need to check that our targets are valid before running through with this commandset
 		if (target == null)
         {
@@ -61,7 +133,8 @@ public class EnemyBehavior : MonoBehaviour {
 	public virtual void DoUpdate() {
 		//Debug.Log(Vector3.Dot(PC_FPSController.Instance.gameObject.transform.forward, Vector3.Normalize(gameObject.transform.position - PC_FPSController.Instance.gameObject.transform.position)));
 		//Check to see if we're behind the player. It's important that this doesn't get avoided
-		if (Vector3.Dot(PC_FPSController.Instance.gameObject.transform.forward, Vector3.Normalize(gameObject.transform.position - PC_FPSController.Instance.gameObject.transform.position)) < -0.5f)
+		//Also see if we're playing audio and complete it as necessary
+		if (!ourAudio.isPlaying && Vector3.Dot(PC_FPSController.Instance.gameObject.transform.forward, Vector3.Normalize(gameObject.transform.position - PC_FPSController.Instance.gameObject.transform.position)) < -0.5f)
 		{
 			//Debug.Log("Behind Player");
 			ReDropEnemy();
@@ -92,6 +165,7 @@ public class EnemyBehavior : MonoBehaviour {
 		{
 			//We just noticed our player. We need to decide if we're a walker, or a runner, and possibly play a challenge sound/start audio
 			bZombieWaiting = false;
+			PlayZombieNoticeSound();
 			PickZombieMoveState();
 		}
 
@@ -134,26 +208,13 @@ public class EnemyBehavior : MonoBehaviour {
 
 	public virtual Vector3 GetWidgetPosition()
     {
-		/*
-		playerDir = target.transform.position - gameObject.transform.position;
-		distToPlayer = playerDir.sqrMagnitude; 
-		 
-		Vector3 localPlayerDir = Camera.main.transform.InverseTransformDirection(playerDir);
-		Vector2 flatPlayerDir = new Vector2(localPlayerDir.x, localPlayerDir.z);
-		flatPlayerDir = standardizeVector(flatPlayerDir);   //This could be problematic as we don't want normalized, we want standardized...
-		return new Vector3(flatPlayerDir.x, flatPlayerDir.y, distToPlayer);
-		*/
+
 		Vector3 playerDirection = (PC_FPSController.Instance.transform.position - gameObject.transform.position);
 		float playerDistance = playerDirection.sqrMagnitude;
 		//Debug.Log(playerDistance);
-		//playerDirection = playerDirection.normalized;
-
-		//Vector3 localPlayerDir = Camera.main.transform.InverseTransformDirection(playerDirection);
 		Vector3 localPlayerDir = Camera.main.transform.InverseTransformPoint(gameObject.transform.position);
-		//Debug.Log(localPlayerDir);
 		Vector2 flatPlayerDir = new Vector2(localPlayerDir.x, localPlayerDir.z);
 		flatPlayerDir = behindStandardizedVector(flatPlayerDir);   //This could be problematic as we don't want normalized, we want standardized...
-		//Debug.Log(flatPlayerDir);
 		return new Vector3(flatPlayerDir.x, flatPlayerDir.y, playerDistance);
     }
 
@@ -262,6 +323,7 @@ public class EnemyBehavior : MonoBehaviour {
 		attention_radius = attentionRange.GetRandom() * attentionRange.GetRandom();
 		strafeIntensity = StrafeIntensityRange.GetRandom();
 		target = PC_FPSController.Instance.gameObject;
+		groanPitch = GroanPitchRange.GetRandom();
 		PickZombieStartingState();
 	}
 

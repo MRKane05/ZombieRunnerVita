@@ -142,6 +142,7 @@ GameObject:
   - component: {fileID: 4423159010886880}
   - component: {fileID: 143028151279177230}
   - component: {fileID: 114600913980096136}
+  - component: {fileID: 82192342200119476}
   m_Layer: 10
   m_Name: ChasingEnemy
   m_TagString: Untagged
@@ -1074,6 +1075,110 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1721695453969532}
   m_Mesh: {fileID: 4300000, guid: 9ad0041be149c8a4c86902c7d0bff7e0, type: 3}
+--- !u!82 &82192342200119476
+AudioSource:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1328235799384942}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 0}
+  m_PlayOnAwake: 0
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 20
+  Pan2D: 0
+  rolloffMode: 2
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0.16666667
+      value: 1
+      inSlope: -6.002399
+      outSlope: -6.002399
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 0.41901654
+      value: 0.27311707
+      inSlope: -1.1553725
+      outSlope: -1.1553725
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.25539726
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: -0.16673319
+      outSlope: -0.16673319
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!114 &114155891123612692
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1096,20 +1201,43 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 78a0af163e780ba4085173c6ef7c0742, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ZombieClass: 2
   redropMask:
     serializedVersion: 2
     m_Bits: 1
   speed_walk: 3
   speed_amble: 6
+  target: {fileID: 0}
   bHasStruckPlayer: 0
   dash_radius: 16
   attentionRange:
     Min: 15
     Max: 20
   targetCharacter: {fileID: 114998805192436398}
+  bZombieWaiting: 1
   StrafeIntensityRange:
     Min: 0.2
     Max: 0.4
+  GroanInterval:
+    Min: 1
+    Max: 3
+  GroanPitchRange:
+    Min: 0.8
+    Max: 1.2
+  ZombieNoticedSounds: []
+  ZombieIdleSounds: []
+  ZombieSounds:
+  - {fileID: 8300000, guid: dfcb61519b6a6ac4bbd2ed310db79312, type: 3}
+  - {fileID: 8300000, guid: d1d20575a75869e4a9b8cb20284675fe, type: 3}
+  - {fileID: 8300000, guid: 9fca5306e5dc5fc40b5523601d74ed9c, type: 3}
+  - {fileID: 8300000, guid: 2a253479c18f3d549a6d1ab48bd71a3b, type: 3}
+  - {fileID: 8300000, guid: cdc56e17aa29fe24eb571d5b08072a28, type: 3}
+  - {fileID: 8300000, guid: 087ba5c42fca2974bb724214b0ebaa2f, type: 3}
+  - {fileID: 8300000, guid: f2ff484af8943d743ac9cec3a621d0e0, type: 3}
+  - {fileID: 8300000, guid: 8412c1f773bea934aaaf2a937446b179, type: 3}
+  - {fileID: 8300000, guid: fbf1212b9fcec034f9e8a223c67060e1, type: 3}
+  - {fileID: 8300000, guid: 3165b9c561a952d49bf011e20ebdd4fb, type: 3}
+  footfallFrequency: 0.3
   ChaserIndicatorPrefab: {fileID: 1077916675500760, guid: 505240cd5075afb4eb8869aa2654abd9,
     type: 2}
   bNeedsRegrounded: 1

@@ -25,6 +25,7 @@ GameObject:
   - component: {fileID: 114086744085879358}
   - component: {fileID: 82630061386512392}
   - component: {fileID: 114933867291348648}
+  - component: {fileID: 114875597839462154}
   m_Layer: 0
   m_Name: Menu_Statics
   m_TagString: Untagged
@@ -195,6 +196,34 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   loadedScenes: []
   baseMenu: {fileID: 0}
+--- !u!114 &114875597839462154
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1545490400510770}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 333361745b2c1454787d57e92352a35b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Footfall_Pavement:
+  - {fileID: 8300000, guid: c659ad50e70bcb84cba1212f800a9740, type: 3}
+  - {fileID: 8300000, guid: d1012a0a75a45f94ba45d949ee7e0fea, type: 3}
+  - {fileID: 8300000, guid: ac564faea5b92fd448c0067e5965544e, type: 3}
+  - {fileID: 8300000, guid: b020428492c425249b7ff6a8914e7474, type: 3}
+  - {fileID: 8300000, guid: a74862dc8d2249e4c9211c2142c98dad, type: 3}
+  - {fileID: 8300000, guid: 83548d6ca4c67a747ae2d1467111ba65, type: 3}
+  - {fileID: 8300000, guid: 3e35eb587816a514bb91712f6f6fd081, type: 3}
+  - {fileID: 8300000, guid: 839d7af9626bc9d459c021e07ce4cae0, type: 3}
+  - {fileID: 8300000, guid: 4b3601309ff29d848a4c3e0da4abc066, type: 3}
+  - {fileID: 8300000, guid: 5be355905cb4fb54280a6cd42e905ed8, type: 3}
+  - {fileID: 8300000, guid: 975fd88840537c84c84bf33f002a9d7f, type: 3}
+  Footfall_Metal:
+  - {fileID: 8300000, guid: cd16a896ffdf44e42b3ee0920e79e85d, type: 3}
+  - {fileID: 8300000, guid: f63c41ca4d727c749a9394e9d913782e, type: 3}
+  - {fileID: 8300000, guid: e7dd071d1bca0d34e8643deadc4e53a5, type: 3}
+  - {fileID: 8300000, guid: 4bf386c7fddad694198ee77c8bc9a6db, type: 3}
 --- !u!114 &114933867291348648
 MonoBehaviour:
   m_ObjectHideFlags: 1

@@ -13,12 +13,12 @@ PlayerSettings:
   useOnDemandResources: 0
   accelerometerFrequency: 60
   companyName: DefaultCompany
-  productName: ZombieRunner
+  productName: Road of Mailhem
   defaultCursor: {fileID: 0}
   cursorHotspot: {x: 0, y: 0}
   m_SplashScreenBackgroundColor: {r: 0.13725491, g: 0.12156863, b: 0.1254902, a: 1}
   m_ShowUnitySplashScreen: 1
-  m_ShowUnitySplashLogo: 1
+  m_ShowUnitySplashLogo: 0
   m_SplashScreenOverlayOpacity: 1
   m_SplashScreenAnimation: 1
   m_SplashScreenLogoStyle: 1
@@ -256,7 +256,14 @@ PlayerSettings:
     banner: {fileID: 0}
   androidGamepadSupportLevel: 0
   resolutionDialogBanner: {fileID: 0}
-  m_BuildTargetIcons: []
+  m_BuildTargetIcons:
+  - m_BuildTarget: PSP2
+    m_Icons:
+    - serializedVersion: 2
+      m_Icon: {fileID: 2800000, guid: 9208642030ace9e4ab7aa68382727088, type: 3}
+      m_Width: 128
+      m_Height: 128
+      m_Kind: 0
   m_BuildTargetPlatformIcons: []
   m_BuildTargetBatching:
   - m_BuildTarget: Standalone
@@ -511,7 +518,7 @@ PlayerSettings:
   ps4attribEyeToEyeDistanceSettingVR: 0
   ps4IncludedModules: []
   monoEnv: 
-  psp2Splashimage: {fileID: 0}
+  psp2Splashimage: {fileID: 2800000, guid: 2a41ad9ae4aaa9348829dd5380dfb15a, type: 3}
   psp2NPTrophyPackPath: 
   psp2NPSupportGBMorGJP: 0
   psp2NPAgeRating: 12
@@ -543,7 +550,7 @@ PlayerSettings:
   psp2PackagedResourcesPath: 
   psp2SaveDataQuota: 10240
   psp2ParentalLevel: 1
-  psp2ShortTitle: ZombieRunner
+  psp2ShortTitle: Road of Mailhem
   psp2ContentID: IV0000-VHZR12345_00-0123456789ABCDEF
   psp2Category: 0
   psp2MasterVersion: 01.00

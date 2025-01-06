@@ -32,6 +32,8 @@ public class EnemyBehavior_Chaser : EnemyBehavior {
 		ourChaserIcon = PlayerHUDHandler.Instance.AddIndicatorIcon(ChaserIndicatorPrefab);
 		Enemy_Chasericon newChaser = ourChaserIcon.GetComponent<Enemy_Chasericon>();
 		newChaser.parentEnemy = this;
+		ourAudio = gameObject.GetComponent<AudioSource>();
+		groanPitch = GroanPitchRange.GetRandom();
 	}
 
 	void PickRunState()
@@ -131,6 +133,7 @@ public class EnemyBehavior_Chaser : EnemyBehavior {
 		attention_radius = attentionRange.GetRandom() * attentionRange.GetRandom();
 		strafeIntensity = StrafeIntensityRange.GetRandom();
 		target = PC_FPSController.Instance.gameObject;
+		groanPitch = GroanPitchRange.GetRandom();
 		//PickZombieStartingState();
 		PickRunState();	//Chaser zombies have only one state, and that's ON
 	}
