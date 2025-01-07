@@ -61,6 +61,8 @@ public class PC_FPSController : MonoBehaviour
     [Space]
     [Header("Camera Controls")]
     public Camera playerCamera;
+    //public AnimationCurve CameraOffsetCurve = new AnimationCurve(new Keyframe(0f, 0f), new Keyframe(0.2f, 1f), new Keyframe(1f, 0f));
+    Quaternion cameraOffsetRotation = Quaternion.identity;    //Used when the player gets hit
     public GameObject eyePosition;
     public float lookSpeed = 2.0f;
     public float lookXLimit = 30f;
@@ -606,7 +608,7 @@ public class PC_FPSController : MonoBehaviour
         rotationY += Input.GetAxis ("Right Stick Horizontal") * 100f * Time.deltaTime;
 
         rotationY = Mathf.Clamp(rotationY, -lookYLimit, lookYLimit);
-        playerCamera.transform.localRotation = Quaternion.Euler(rotationX, rotationY, 0);
+        playerCamera.transform.localRotation = Quaternion.Euler(rotationX, rotationY, 0) * cameraOffsetRotation;
         
         if (eyePosition)    //Lock our camera to our characters head
         {
@@ -627,12 +629,42 @@ public class PC_FPSController : MonoBehaviour
         PlayerHUDHandler.Instance.setHealthBar(health / 100f);
     }
 
+
+    //Do our camera behavior for getting hit by a zombie
+    float cameraOffsetTime = 1f;
+    float cameraOffsetStart = 0f;
+    Quaternion cameraOffsetTarget = Quaternion.identity;
+
+    void HandleCameraOffsetRotation()
+    {
+        if (Time.time < cameraOffsetStart + cameraOffsetTime) {
+            //Really we've got an out then back to zero...
+            float cameraT = (cameraOffsetStart + cameraOffsetTime - Time.time) / cameraOffsetTime;
+            if (cameraT > 0.8f) {
+                cameraOffsetRotation = Quaternion.Slerp(cameraOffsetRotation, cameraOffsetTarget, Time.deltaTime * 7f); //Fast out
+            } else
+            {
+                cameraOffsetRotation = Quaternion.Slerp(cameraOffsetRotation, Quaternion.identity, Time.deltaTime * 1.3f); //Slower back
+            }
+        } else
+        {
+            cameraOffsetRotation = Quaternion.identity;
+        }
+    }
+
+    void setCameraOffset(Quaternion newOffset)
+    {
+        cameraOffsetTarget = newOffset;
+        cameraOffsetStart = Time.time;
+    }
+
     void Update()
     {
         currentState.UpdateState(); //Update our current movement state
         HandleHealthSystems();
         HandleControllerScale();
         HandleMomentumControl();
+        HandleCameraOffsetRotation();
         //And I don't see why we can't just leave the camera controller here...
         ControlCamera();
         AdjustFollowDisplay();
@@ -719,8 +751,11 @@ public class PC_FPSController : MonoBehaviour
             XAngle = Vector3.SignedAngle(Camera.main.transform.forward, -direction, Vector3.up);
             YAngle = 90f;
         }
-        
-        
+
+        Quaternion newTargetAngle = Quaternion.AngleAxis(-XAngle, Vector3.up) * Quaternion.AngleAxis(30f, Vector3.right);
+        Debug.Log("XAngle: " + XAngle);
+        setCameraOffset(newTargetAngle);
+
         //This needs to put in place a hit effect, and also a speed penalty
         if (!bHitByChaser)
         {
@@ -843,7 +878,7 @@ public class PC_FPSController : MonoBehaviour
         {
             ourAudio.PlayOneShot(MasterAudioBank.Instance.GetRandomFootfallSound(MasterAudioBank.enFootfallSubstrate.PAVEMENT));
         }
-        else if (groundObject.tag == "Clutter")
+        else if (groundObject.tag == "Clutter" || !bIsGrounded())   //This is an assumption that we could be wallrunning and our only surfaces at the moment are metal
         {     //We're probably on cars
             ourAudio.PlayOneShot(MasterAudioBank.Instance.GetRandomFootfallSound(MasterAudioBank.enFootfallSubstrate.METAL));
         }

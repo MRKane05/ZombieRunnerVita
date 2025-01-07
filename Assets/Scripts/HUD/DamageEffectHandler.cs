@@ -62,7 +62,6 @@ public class DamageEffectHandler : MonoBehaviour {
 			bIsInUse = false;
 			damageGraphic.enabled = false; //.gameObject.SetActive(false);
 			damageGlow.enabled = false; //.gameObject.SetActive(false);
-			Debug.Log("Disabling Damage Effect");
 		}
 
         if (bIsInUse)
