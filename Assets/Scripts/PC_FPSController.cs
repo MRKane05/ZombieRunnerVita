@@ -637,19 +637,19 @@ public class PC_FPSController : MonoBehaviour
 
     void HandleCameraOffsetRotation()
     {
-        if (Time.time < cameraOffsetStart + cameraOffsetTime) {
-            //Really we've got an out then back to zero...
-            float cameraT = (cameraOffsetStart + cameraOffsetTime - Time.time) / cameraOffsetTime;
-            if (cameraT > 0.8f) {
-                cameraOffsetRotation = Quaternion.Slerp(cameraOffsetRotation, cameraOffsetTarget, Time.deltaTime * 7f); //Fast out
-            } else
-            {
-                cameraOffsetRotation = Quaternion.Slerp(cameraOffsetRotation, Quaternion.identity, Time.deltaTime * 1.3f); //Slower back
-            }
+        //if (Time.time < cameraOffsetStart + cameraOffsetTime) {
+        //Really we've got an out then back to zero...
+        float cameraT = (cameraOffsetStart + cameraOffsetTime - Time.time) / cameraOffsetTime;
+        if (cameraT > 0.8f) {
+            cameraOffsetRotation = Quaternion.Slerp(cameraOffsetRotation, cameraOffsetTarget, Time.deltaTime * 7f); //Fast out
         } else
         {
-            cameraOffsetRotation = Quaternion.identity;
+            cameraOffsetRotation = Quaternion.Slerp(cameraOffsetRotation, Quaternion.identity, Time.deltaTime * 1.3f); //Slower back
         }
+        //} else
+        //{
+       //     cameraOffsetRotation = Quaternion.identity;
+       // }
     }
 
     void setCameraOffset(Quaternion newOffset)
