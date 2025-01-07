@@ -685,15 +685,42 @@ public class PC_FPSController : MonoBehaviour
         //FollowIndicator.GetComponent<RectTransform>().sizeDelta = new Vector2(FollowIndicator.GetComponent<RectTransform>().sizeDelta.x, Mathf.Lerp(400f, 100f, PlayerLeadTime / 3f));
     }
 
+
+    Vector2 standardizeVector(Vector2 thisVec)
+    {
+        //thisVec = thisVec.normalized;
+        Vector2 localVec = Vector2.zero;
+        if (Mathf.Abs(thisVec.x) > Mathf.Abs(thisVec.y))
+        {
+            //Standardize to X
+            float factor = Mathf.Abs(thisVec.x);
+            localVec = new Vector2(thisVec.x / factor, thisVec.y / factor);
+        }
+        else
+        {
+            //Standardize to y
+            float factor = Mathf.Abs(thisVec.y);
+            localVec = new Vector2(thisVec.x / factor, thisVec.y / factor);
+        }
+        return localVec;
+    }
+
     //This might need more information passed through at some stage, but we're starting with a MVP here
     public void EnemyHitPlayer(GameObject Instigator, bool bHitByChaser) {
 
-        //Figure out where our damage came from
-        //PROBLEM: I want hits to affect the player differently depending on what state the player is in
-        //we also need to consider what state our player is in an how the damage will affect them in this state
-        Vector3 damageDirection = (Instigator.transform.position - gameObject.transform.position).normalized;
-        damageDirection = transform.InverseTransformDirection(damageDirection); //Convert this direction into local space
-        PlayerHUDHandler.Instance.takeDamage(damageDirection);
+        // Calculate direction to the damage source
+        Vector3 direction = Instigator.transform.position - gameObject.transform.position;
+
+        // Get angle relative to the player's forward direction
+        float XAngle = Vector3.SignedAngle(Camera.main.transform.forward, direction, Vector3.up);
+        float YAngle = Vector3.SignedAngle(Camera.main.transform.forward, direction, Camera.main.transform.right);
+        if (direction.z < 0)    //This is behind us
+        {
+            XAngle = Vector3.SignedAngle(Camera.main.transform.forward, -direction, Vector3.up);
+            YAngle = 90f;
+        }
+        
+        
         //This needs to put in place a hit effect, and also a speed penalty
         if (!bHitByChaser)
         {
@@ -703,7 +730,9 @@ public class PC_FPSController : MonoBehaviour
                 stumbleTime = stumbleMax;
                 boostTime = 0; //Getting hit cancels our bost
                 setCurrentAnimation("Hit_Left");    //Our hits need a special handler as technically they're grounded
-                health -= 10f;
+                float damage = UnityEngine.Random.Range(10f, 20f);
+                health -= damage;
+                PlayerHUDHandler.Instance.takeDamage(new Vector2(XAngle, YAngle), damage);
             } else
             {
                 //Don't suffer a slowdown
@@ -716,7 +745,9 @@ public class PC_FPSController : MonoBehaviour
             boostTime = 0.125f; //Give the player a boost when they're clobbered. This mightn't be the right way of going about this...
             setCurrentAnimation("Hit_Behind");    //Our hits need a special handler as technically they're grounded
             //This hit is intended to do more damage than the other ones which are "brusing hits"
-            health -= 30f;
+            float damage = UnityEngine.Random.Range(20f, 40f);
+            health -= damage;
+            PlayerHUDHandler.Instance.takeDamage(new Vector2(XAngle, YAngle), 30);
         }
         lastHitTime = Time.time;
         

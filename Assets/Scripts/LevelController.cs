@@ -172,7 +172,7 @@ public class LevelController : MonoBehaviour {
 
 	public void SpawnLevelZombies()
     {
-		Debug.Log("Doing Zombie Spawn Loop");
+		//Debug.Log("Doing Zombie Spawn Loop");
 		//spawn all the zombies that'll be used in this level
 		for (int i=0; i<maxZombies; i++)
         {
@@ -268,7 +268,7 @@ public class LevelController : MonoBehaviour {
 
 	public void SpawnChaserZombies()
 	{
-		Debug.Log("Doing Chaser Zombie Spawn Loop");
+		//Debug.Log("Doing Chaser Zombie Spawn Loop");
 		//spawn all the zombies that'll be used in this level
 		for (int i = 0; i < maxChaserZombies; i++)
 		{

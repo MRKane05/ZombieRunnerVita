@@ -11,7 +11,7 @@ public class PlayerHUDHandler : MonoBehaviour {
 	public DamageIndicatorHandler damageIndicator; //Really this should go through a UI handler, but for the moment...
 	public Image healthBar;
 	public GameObject ChaserIndicatorsBase;
-
+	RectTransform ourRect;
 	void Awake()
 	{
 		if (instance)
@@ -26,7 +26,7 @@ public class PlayerHUDHandler : MonoBehaviour {
 
 	void Start()
 	{
-
+		ourRect = gameObject.GetComponent<RectTransform>();
 	}
 
 	public void setStaminaBar(float t)
@@ -39,9 +39,9 @@ public class PlayerHUDHandler : MonoBehaviour {
 		healthBar.fillAmount = t;
     }
 
-	public void takeDamage(Vector3 DamageDirection)
+	public void takeDamage(Vector3 DamageDirection, float damage)
 	{
-		damageIndicator.TakeDamage(DamageDirection);
+		damageIndicator.TakeDamage(DamageDirection, damage);
 	}
 
 	//Called when we die, or when we've successfully finished the run
