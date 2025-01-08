@@ -18,12 +18,20 @@ using UnityEngine.UI;
 //Paths need to remember the nests they had, and the nature of the nests that have been cleared
 
 [System.Serializable]
+public class RunDetails
+{
+	public GameObject markerTarget;
+	public string runLevelName = "";
+	public bool bDoRunForward = true;
+}
+
+[System.Serializable]
 public class MapLocation {
 	public string locationName = "town";
 	public string description = "A little center positioned by an abandoned railway";
 	public GameObject referenceObject;	//I'm not 100% sure how this'll work actually, especially when it comes to saving
 	//An array of run buttons that will be enabled while we're at this location
-	public List<GameObject> avaliableRuns = new List<GameObject>();
+	public List<RunDetails> avaliableRuns = new List<RunDetails>();
 	//We could do with storing a bit of information about this town as well
 	public float townHealth = 33f;  //How is the town doing? Lower values will net higher returns for supplying this town
 
@@ -72,13 +80,13 @@ public class RunSelectMenu : MonoBehaviour {
 					mapLoc.referenceObject.GetComponent<TownMarkerIcon>().setPlayerLocation(true);  //Set this ast our start location
 																									//Now we need to set our starting point and our enabled run locations
 					bool bPickedStart = false;
-					foreach (GameObject linkedTown in mapLoc.avaliableRuns)
+					foreach (RunDetails linkedTown in mapLoc.avaliableRuns)
                     {
-						linkedTown.GetComponent<Button>().interactable = true;
+						linkedTown.markerTarget.GetComponent<Button>().interactable = true;
 						if (!bPickedStart)
                         {
 							bPickedStart = true;
-							UIHelpers.SetSelectedButton(linkedTown);
+							UIHelpers.SetSelectedButton(linkedTown.markerTarget);
                         }
                     }
 				}
@@ -105,6 +113,14 @@ public class RunSelectMenu : MonoBehaviour {
 																						//Really we need to include the map we'll be running here too based off of from/to details (somehow!)
 																						//Our panel should be on this gameobject (damn this is bad coding!)
 				gameObject.GetComponentInChildren<PanelHandler>().LoadMenuScene("Game_RunPayloadSelectMenu");
+				foreach (RunDetails thisAvaliable in mapLoc.avaliableRuns)
+                {
+					if (thisAvaliable.markerTarget.name.Contains(destinationTown)) //This is where we're going to. Lets grab our map and run direction
+                    {
+						GameController.Instance.RunDetails.targetMap = thisAvaliable.runLevelName;
+						GameController.Instance.RunDetails.bRunMapForward = thisAvaliable.bDoRunForward;
+                    }
+                }
 			}
 		}
 	}
@@ -127,7 +143,7 @@ public class RunSelectMenu : MonoBehaviour {
 			//We need the possible destinations here to pass through as options
 			int randomTown = (int)Random.Range(0, thisLocation.avaliableRuns.Count);
 			//Debug.Log("Random Town: " + randomTown);
-			string targetTown = thisLocation.avaliableRuns[randomTown].GetComponent<TownMarkerIcon>().townName;
+			string targetTown = thisLocation.avaliableRuns[randomTown].markerTarget.GetComponent<TownMarkerIcon>().townName;
 			newPackages.Add(createTownPackage(targetTown));
         }
 		return newPackages;

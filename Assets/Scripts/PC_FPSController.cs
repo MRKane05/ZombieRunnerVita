@@ -14,7 +14,7 @@ public class PC_FPSController : MonoBehaviour
     private static PC_FPSController instance = null;
     public static PC_FPSController Instance { get { return instance; } }
 
-    PathCreator pathCreator;
+    public PathCreator pathCreator;
 
     //PROBLEM: This UI stuff needs fixed up
     [Space]
@@ -209,9 +209,17 @@ public class PC_FPSController : MonoBehaviour
         StartPosition = gameObject.transform.position;
 
         //Handle our curve position
-        pathCreator = LevelController.Instance.pathCreator; //Set this so that the player doesn't always have to be setup
+        //if (LevelController.Instance.bRunForward)
+        //{
+            pathCreator = LevelController.Instance.pathCreatorReference; //Set this so that the player doesn't always have to be setup
+        /*} else
+        {
+            pathCreator = LevelController.Instance.pathCreator_Reverse; //Set this so that the player doesn't always have to be setup
+        }*/
+         
         bestTime = pathCreator.path.GetClosestTimeOnPath(gameObject.transform.position);  //This is actually well optimised...
         bestDistance = pathCreator.path.GetClosestDistanceAlongPath(gameObject.transform.position);
+
         priorPosition = gameObject.transform.position;
     }
 
@@ -310,13 +318,26 @@ public class PC_FPSController : MonoBehaviour
         {
             Debug.LogError("No assigned path on the player controller!");
             //Alternatively, just assign it at this stage
-            pathCreator = LevelController.Instance.pathCreator;
+            //Handle our curve position
+            //if (LevelController.Instance.bRunForward)
+            //{
+                pathCreator = LevelController.Instance.pathCreatorReference; //Set this so that the player doesn't always have to be setup
+            /*}
+            else
+            {
+                pathCreator = LevelController.Instance.pathCreator_Reverse; //Set this so that the player doesn't always have to be setup
+            }*/
             return Vector3.forward;
         }
 
         //So I think I need a new approach. We'll get the time to kick off with, and then go off of distance with a guess based off of how fast we're travelling, and a bit of wriggle ahead/behind then take the closest as gospel
         float distanceGuess = bestDistance + flatMoveDistance;// * Time.deltaTime;
+        if (!LevelController.Instance.bRunForward)  //reverse our above logic
+        {
+            distanceGuess = bestDistance - flatMoveDistance;
+        }
         bestDistance = distanceGuess;
+        //Reversing this would be easier if we simply had a reverse curve...
         bestDistanceSpan = Vector3.SqrMagnitude(gameObject.transform.position-pathCreator.path.GetPointAtDistance(distanceGuess));
 
         float distanceRange = moveSpeed * Time.deltaTime *0.5f; //how far we'll shift with each check. This should be self-correcting
@@ -335,10 +356,13 @@ public class PC_FPSController : MonoBehaviour
         }
 
         //Lets see how good the above actually is
-        //Debug.Log("Distance Guess: " + (bestDistance - pathCreator.path.GetClosestDistanceAlongPath(gameObject.transform.position)));
-
+        //Debug.Log(bestDistance);
         //we really only  need the path normal for our heading
-        Vector3 pathHeading = pathCreator.path.GetDirectionAtDistance(bestDistance); // .GetDirection(bestTime); // (distance, EndOfPathInstruction.Stop);
+        Vector3 pathHeading = pathCreator.path.GetDirectionAtDistance(bestDistance);
+        if (!LevelController.Instance.bRunForward) //rotate our forward direction
+        {
+            pathHeading = Quaternion.AngleAxis(180f, Vector3.up) * pathHeading;
+        }
         return pathHeading; //We assume that this is forward
     }
     
@@ -504,10 +528,9 @@ public class PC_FPSController : MonoBehaviour
         return characterController.isGrounded;
     }
 
-    //For the moment (before we add spline controls) lets just do this
-    public Vector3 Char_Forward {  get { return Vector3.forward;  } }
+    public Vector3 Char_Forward {  get { return gameObject.transform.forward;  } }
 
-    public Vector3 Char_Right { get { return Vector3.right; } }
+    public Vector3 Char_Right { get { return gameObject.transform.right; } }
 
     public bool bHitWall()
     {
@@ -562,13 +585,12 @@ public class PC_FPSController : MonoBehaviour
         Vector3 mantleGrabLip = mantleGrabReach + Char_Forward * mantleGrabDepth;   //This is the point we cast down from to see if we're doing a mantle
         if (Physics.Raycast(mantleGrabLip, -Vector3.up * mantleGrabHeight, out hit, mantleGrabHeight, worldRaycastMask))
         {
-            
-            //Debug.DrawLine(transform.position, transform.position + Vector3.up * mantleGrabHeight, Color.red, 15f);
-            //Debug.DrawLine(mantleGrabReach, mantleGrabReach + Char_Forward * mantleGrabDepth, Color.red, 15f);
-            //Debug.DrawLine(mantleGrabLip, hit.point, Color.red, 15f);
-            //Debug.Log(hit.collider.gameObject.name);
-            
-            
+            /*
+            Debug.DrawLine(transform.position, transform.position + Vector3.up * mantleGrabHeight, Color.red, 15f);
+            Debug.DrawLine(mantleGrabReach, mantleGrabReach + Char_Forward * mantleGrabDepth, Color.red, 15f);
+            Debug.DrawLine(mantleGrabLip, hit.point, Color.red, 15f);
+            Debug.Log(hit.collider.gameObject.name);
+            */
             _mantlePoint = hit.point;
             return hit.point; //We're not grabbing above an object
         }
@@ -695,8 +717,12 @@ public class PC_FPSController : MonoBehaviour
         //Because our character body keeps drifting with animations...
         playerAnimator.transform.localPosition = Vector3.Lerp(playerAnimator.transform.localPosition, Vector3.zero, Time.deltaTime);
         playerAnimator.transform.localRotation = Quaternion.Slerp(playerAnimator.transform.localRotation, Quaternion.identity, Time.deltaTime);
-
-        if (Input.GetMouseButtonDown(0) || Input.GetButtonDown("Right Shoulder"))
+        //So that our touch input doesn't throw distractions
+#if UNITY_EDITOR
+        if (Input.GetMouseButtonDown(0))
+#else
+        if (Input.GetButtonDown("Right Shoulder"))
+#endif
         {
             ThrowSelectedItem();
         }
@@ -753,9 +779,7 @@ public class PC_FPSController : MonoBehaviour
         }
 
         Quaternion newTargetAngle = Quaternion.AngleAxis(-XAngle, Vector3.up) * Quaternion.AngleAxis(30f, Vector3.right);
-        Debug.Log("XAngle: " + XAngle);
-        setCameraOffset(newTargetAngle);
-
+        
         //This needs to put in place a hit effect, and also a speed penalty
         if (!bHitByChaser)
         {
@@ -768,6 +792,9 @@ public class PC_FPSController : MonoBehaviour
                 float damage = UnityEngine.Random.Range(10f, 20f);
                 health -= damage;
                 PlayerHUDHandler.Instance.takeDamage(new Vector2(XAngle, YAngle), damage);
+                //Our hit reaction
+                setCameraOffset(newTargetAngle);
+
             } else
             {
                 //Don't suffer a slowdown
@@ -782,14 +809,16 @@ public class PC_FPSController : MonoBehaviour
             //This hit is intended to do more damage than the other ones which are "brusing hits"
             float damage = UnityEngine.Random.Range(20f, 40f);
             health -= damage;
-            PlayerHUDHandler.Instance.takeDamage(new Vector2(XAngle, YAngle), 30);
+            PlayerHUDHandler.Instance.takeDamage(new Vector2(XAngle, YAngle), damage);
+            //Our hit reaction
+            setCameraOffset(newTargetAngle);
         }
         lastHitTime = Time.time;
         
         //setCurrentAnimation("Hit_Guard");
     }
 
-    #region BoostFunctions
+#region BoostFunctions
 
     //This is used for jump button release boosts
     public void SetBoostTrigger(float boostDuration)
@@ -843,9 +872,9 @@ public class PC_FPSController : MonoBehaviour
         setCurrentAnimation("Arms_Guard");	//Show that we're doing something visual here
         return true;
     }
-    #endregion
+#endregion
 
-    #region LadderFunctions
+#region LadderFunctions
     void OnTriggerEnter(Collider other)
     {
         //Debug.Log("Got Trigger Enter");
@@ -866,26 +895,29 @@ public class PC_FPSController : MonoBehaviour
             bClimbing = false;
         }
     }
-    #endregion
+#endregion
 
-    #region Animation Callbacks
+#region Animation Callbacks
     public void DoFootstepSound()
     {
         //We need to figure out what we're standing on, but for the moment lets just make a step noise
         //For the moment...
         //Debug.Log(groundObject.tag);
-        if (groundObject.GetComponent<Terrain>() != null) //We're in the grass!
+        if (groundObject)
         {
-            ourAudio.PlayOneShot(MasterAudioBank.Instance.GetRandomFootfallSound(MasterAudioBank.enFootfallSubstrate.PAVEMENT));
-        }
-        else if (groundObject.tag == "Clutter" || !bIsGrounded())   //This is an assumption that we could be wallrunning and our only surfaces at the moment are metal
-        {     //We're probably on cars
-            ourAudio.PlayOneShot(MasterAudioBank.Instance.GetRandomFootfallSound(MasterAudioBank.enFootfallSubstrate.METAL));
-        }
-        else
-        {
-            ourAudio.PlayOneShot(MasterAudioBank.Instance.GetRandomFootfallSound(MasterAudioBank.enFootfallSubstrate.PAVEMENT));
+            if (groundObject.GetComponent<Terrain>() != null) //We're in the grass!
+            {
+                ourAudio.PlayOneShot(MasterAudioBank.Instance.GetRandomFootfallSound(MasterAudioBank.enFootfallSubstrate.PAVEMENT));
+            }
+            else if (groundObject.tag == "Clutter" || !bIsGrounded())   //This is an assumption that we could be wallrunning and our only surfaces at the moment are metal
+            {     //We're probably on cars
+                ourAudio.PlayOneShot(MasterAudioBank.Instance.GetRandomFootfallSound(MasterAudioBank.enFootfallSubstrate.METAL));
+            }
+            else
+            {
+                ourAudio.PlayOneShot(MasterAudioBank.Instance.GetRandomFootfallSound(MasterAudioBank.enFootfallSubstrate.PAVEMENT));
+            }
         }
     }
-    #endregion
+#endregion
 }

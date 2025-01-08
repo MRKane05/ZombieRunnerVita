@@ -17,20 +17,21 @@ public class UI_PackageSelectHandler : PanelHandler
     public TextMeshProUGUI avaliableWeightDisplay;
     public TextMeshProUGUI avaliableMoneyDisplay;
 
-    float totalValue = 0;
-    float totalWeight = 0;
+    public float totalValue = 0;
+    public float totalWeight = 0;
 
     void OnEnable()
     {
         //See if populating our menu from this is a good approach (I dunno). lets try a message first
-        setupPackageOptions();
+        StartCoroutine(setupPackageOptions());
+        SetPanelSelected(0, 0);
     }
 
-    void setupPackageOptions()
+    IEnumerator setupPackageOptions()
     {
         //This needs to take into account anything we're already carrying...
         avaliableWeightDisplay.text = "Avaliable: " + (GameController.Instance.playerInfo.avaliableWeight - GameController.Instance.GetWeightOfCarriedPackages()).ToString();
-        avaliableMoneyDisplay.text = "Avaliable: " + GameController.Instance.playerInfo.avaliableCash.ToString();
+        avaliableMoneyDisplay.text = "Avaliable: $" + GameController.Instance.playerInfo.avaliableCash.ToString();
 
         if (LayoutGroup.transform.childCount > 0)
         {
@@ -50,6 +51,8 @@ public class UI_PackageSelectHandler : PanelHandler
             UI_SelectablePackage newSelectable = newPackage.GetComponent<UI_SelectablePackage>();
             newSelectable.setPackageDetails(thisPackage, this);
         }
+
+        yield return null;
         //After we've done this we should set our selection at the top item
         UIHelpers.SetSelectedButton(LayoutGroup.transform.GetChild(0).gameObject);
     }

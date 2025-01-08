@@ -37,13 +37,20 @@ public class LevelController : MonoBehaviour {
 	public enum enLevelPlayState { NULL, START, STARTPLAY, PLAYING, ENDED, PAUSED }
 	public enLevelPlayState levelPlayState = enLevelPlayState.START;
 	[Header("Level Setup Details")]
-	public PathCreator pathCreator;
+	public PathCreator pathCreatorReference;
+	//public PathCreator pathCreator_Reverse;
+	public GameObject startPointForward, startPointReverse;
+	public GameObject PlayerCharacter;	//This is really just for positioning our player at the start/end of the run
 	public Texture2D zombiePropTexture; //This needs to be specific to each level
 	public System.Byte[,] zombiePropTable;
 	public int tableDistance = 0;   //What's the maximum distance on our table?
 	public int tableWidth = 0;
 	public float RunDistance = 250f;	//What's the overall distance of our run?
 	bool bHasPropensityFile = false;
+
+	//A few details handling our run direction (this could be all kinds of nasty...)
+	public bool bRunForward = true;
+
 	[Space]
 	[Header("Level Zombie Details")]
 
@@ -85,6 +92,8 @@ public class LevelController : MonoBehaviour {
 		ReadArrayFromResourcesBinaryFile();
 
 		setPlayState(enLevelPlayState.START); //Prepare our start functionality stuff
+
+		bRunForward = GameController.Instance.RunDetails.bRunMapForward;	//Make sure we've grabbed this value right off of the hammer so that we'll know what we're doing here
 	}
 
 	public int GetActiveZombieCount()
@@ -166,6 +175,9 @@ public class LevelController : MonoBehaviour {
 		//Of course this mightn't be where our physical wall is, so there's that
 		//PROBLEM: Distance needs to be calculated between walls
 		float playerT = PC_FPSController.Instance.bestDistance / RunDistance;
+		if (!bRunForward) {  //reverse our density evaluation for the reverse run
+			playerT = 1f - playerT;
+		}
 		int TargetZombies = Mathf.RoundToInt(maxZombies * ZombieDensityCurve.Evaluate(playerT));
 		return TargetZombies;
 	}
@@ -184,8 +196,6 @@ public class LevelController : MonoBehaviour {
 			SpawnedZombies.Add(newLevelZombie);
         }
 
-		//PROBLEM: Technically we should do our chasers here, but I'll worry about that later
-
 		//Spawn the zombies that'll be standing around
 		for (int i=0; i<startingZombies; i++)
         {
@@ -195,7 +205,7 @@ public class LevelController : MonoBehaviour {
 
 	IEnumerator DelayPlaceChaser(float spawnDelay, Vector3 dropPoint)
     {
-		Debug.Log("Adding Chaser Zombie");
+		//Debug.Log("Adding Chaser Zombie");
 		//We need to find a free zombie to use for this
 		LevelZombie thisZombie = null;
 		foreach(LevelZombie newZombie in SpawnedChasers)
@@ -260,7 +270,7 @@ public class LevelController : MonoBehaviour {
 		//So this is a great point to assess if we're going to turn this "zombie" into a chaser
 		if (Random.value < zombieBecomeChaserChance && GetActiveZombieChaserCount() < maxChaserZombies)
 		{
-			Debug.Log("Calling add Chaser Zombie");
+			//Debug.Log("Calling add Chaser Zombie");
 			//We want to drop a chaser in where this zombie was before the zombie is moved
 			StartCoroutine(DelayPlaceChaser(Random.Range(0.5f, 2f), thisZombie.transform.position));
 		}
@@ -286,6 +296,21 @@ public class LevelController : MonoBehaviour {
 		Time.timeScale = newTimescale;
 	}
 
+	//Public because we might need to call this remotely
+	public void setPlayerPosition()
+    {
+		Debug.Log("Setting player start position");
+		if (bRunForward)
+        {
+			PlayerCharacter.transform.position = startPointForward.transform.position;
+			PlayerCharacter.transform.rotation = startPointForward.transform.rotation;
+        } else
+        {
+			PlayerCharacter.transform.position = startPointReverse.transform.position;
+			PlayerCharacter.transform.rotation = startPointReverse.transform.rotation;
+		}
+    }
+
 	public void setPlayState(enLevelPlayState newPlaystate)
 	{
 		levelPlayState = newPlaystate;
@@ -294,11 +319,13 @@ public class LevelController : MonoBehaviour {
 			case enLevelPlayState.NULL:
 				break;
 			case enLevelPlayState.START:
+				setPlayerPosition();
 				setTimescale(0f); //Pause our play
 								  //We need to bring up our menu, and at some stage do something fancy,  but for the moment: menu
 				UIMenuHandler.Instance.LoadMenuSceneAdditively("Game_LevelStart", null, null);	//Load the game start menu. Hardcoded for the moment
 				break;
-			case enLevelPlayState.STARTPLAY:	//Everything we need to do when we start the level running
+			case enLevelPlayState.STARTPLAY:    //Everything we need to do when we start the level running
+												//We need to set our player position to start the run
 				levelPlayState = enLevelPlayState.PLAYING; //Set our start correctly after our initial tick
 				break;
 			case enLevelPlayState.PLAYING:
@@ -452,6 +479,11 @@ public class LevelController : MonoBehaviour {
 		int cycles = 0;
 		//Ok, so lets start 30m ahead of the player
 		int spawnPoint = rowDistance + 30;
+		if (!bRunForward)
+        {
+			spawnPoint = rowDistance - 30;
+        }
+
 		bool bFoundDropPoint = false;
 		while (!bFoundDropPoint && cycles < 30)
         {
@@ -499,10 +531,20 @@ public class LevelController : MonoBehaviour {
 
 	public Vector3 GetPixelPathPosition(int distance, int widthPos)
     {
-		Vector3 worldPoint = pathCreator.path.GetPointAtDistance(distance);
-		Vector3 pathDir = pathCreator.path.GetDirectionAtDistance(distance);
-		Vector3 pathRight = Quaternion.AngleAxis(90f, Vector3.up) * pathDir;
-
+		Vector3 worldPoint = Vector3.zero;
+		Vector3 pathDir = Vector3.zero;
+		Vector3 pathRight = Vector3.zero;
+		//if (bRunForward)
+		//{
+			worldPoint = pathCreatorReference.path.GetPointAtDistance(distance);
+			pathDir = pathCreatorReference.path.GetDirectionAtDistance(distance);
+			/*
+		} else
+        {
+			worldPoint = pathCreator_Reverse.path.GetPointAtDistance(distance);
+			pathDir = pathCreator_Reverse.path.GetDirectionAtDistance(distance);
+		}*/
+		pathRight = Quaternion.AngleAxis(90f, Vector3.up) * pathDir;
 		return worldPoint + pathRight * widthPos;// + Vector3.up * 1.2f;
     }
 
@@ -535,8 +577,15 @@ public class LevelController : MonoBehaviour {
 			//float baseRandX = Random.RandomRange(-10f, 10f);
 
 			float RandomCurveDistance = PC_FPSController.Instance.bestDistance + Random.RandomRange(30f, 40f);
-			Vector3 CurveDropPoint = pathCreator.path.GetPointAtDistance(RandomCurveDistance);
-			Vector3 CurveDirection = pathCreator.path.GetDirectionAtDistance(RandomCurveDistance);
+			Vector3 CurveDropPoint = Vector3.zero;
+			Vector3 CurveDirection = Vector3.zero;
+
+			if (bRunForward)
+            {
+				CurveDropPoint = pathCreatorReference.path.GetPointAtDistance(RandomCurveDistance);
+				CurveDirection = pathCreatorReference.path.GetDirectionAtDistance(RandomCurveDistance);
+			}
+
 			CurveDropPoint += Quaternion.AngleAxis(90f, Vector3.up) * CurveDirection * Random.RandomRange(-10f, 10f);
 			//Move our curve point up so we're elevated for the hit
 			CurveDropPoint += Vector3.up * 30f;
@@ -577,9 +626,10 @@ public class LevelController : MonoBehaviour {
 
 	public void GeneratePointDropValue(Vector3 thisPoint)
     {
-		float pathDistance = pathCreator.path.GetClosestDistanceAlongPath(thisPoint);
-		Vector3 pathDirection = pathCreator.path.GetDirectionAtDistance(pathDistance);
-		Vector3 pathPoint = pathCreator.path.GetPointAtDistance(pathDistance);
+		//PROBLEM: We technically need two different tables for forward/reverse
+		float pathDistance = pathCreatorReference.path.GetClosestDistanceAlongPath(thisPoint);
+		Vector3 pathDirection = pathCreatorReference.path.GetDirectionAtDistance(pathDistance);
+		Vector3 pathPoint = pathCreatorReference.path.GetPointAtDistance(pathDistance);
 
 		Vector3 startPoint = new Vector3(thisPoint.x, pathPoint.y, thisPoint.z);
 

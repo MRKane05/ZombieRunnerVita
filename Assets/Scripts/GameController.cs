@@ -24,6 +24,8 @@ public class runDetails
 	public string endLocation = "";
 	public string startLocation = "";
 	public List<townPackage> carriedPackages = new List<townPackage>();
+	public string targetMap = "";
+	public bool bRunMapForward = true;
 }
 
 [System.Serializable]
@@ -77,7 +79,7 @@ public class GameController : MonoBehaviour {
 		//RunDetails.startLocation = "Musselbrough"; //Quick hardcoding to test
 		RunDetails.runState = runDetails.enRunState.RUNNING;
 		//search reference tables to find the correct run that we need to do
-		LoadRunLevel("RoadSetup_Terrain_HeadOriented_VehicleDrop");
+		LoadRunLevel(RunDetails.targetMap);
 	}
 
 	public void LoadRunLevel(string thisLevelName)

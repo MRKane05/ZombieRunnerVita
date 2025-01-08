@@ -317,8 +317,8 @@ public class RandomHighwaySpawner : MonoBehaviour {
 	//This should be a universal function somewhere as it's used in two different places
 	public string GetPRBPath()
 	{
-		//return Application.dataPath + "/Resources/Propensities/" + gameObject.scene.name + "_props.bin";
-		return Application.streamingAssetsPath + "/Propensities/" + gameObject.scene.name + "_props.bin";
+		return Application.dataPath + "/Resources/" + gameObject.scene.name + "_props.txt";	//This is the working path it'd seem. The others have had issues. MUST be a text file despite it being read as a bin
+		//return Application.streamingAssetsPath + gameObject.scene.name + "_props.txt";
 	}
 
 	public string GetScenePath()

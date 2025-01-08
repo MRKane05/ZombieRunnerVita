@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using UnityEngine;
 using PathCreation;
 using RoadArchitect;
+using System.Linq;
 
 [ExecuteInEditMode]
 public class RoadToBezier : MonoBehaviour {
 	public PathCreator pathCreator;
 	public SplineC SplineCBase;
 	public bool bGenerateSpline = false;
+	public bool bGenerateForward = true;
 
 	void Update()
     {
@@ -27,7 +29,13 @@ public class RoadToBezier : MonoBehaviour {
         {
 			pointArray.Add(thisNode.pos);
         }
+
+		if (!bGenerateForward)	//we need to reverse our array and write out the new path
+        {
+			pointArray.Reverse();
+        }
 		Vector3[] points = pointArray.ToArray();
+
 		pathCreator.bezierPath = new BezierPath(points, false, PathSpace.xyz);
 	}
 }

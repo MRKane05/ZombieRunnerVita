@@ -120,26 +120,42 @@ public class EnemyBehavior : MonoBehaviour {
     }
 
 	public void Update() {
-		checkMakeSound();
-		playFootfallSound();
-		//We need to check that our targets are valid before running through with this commandset
-		if (target == null)
-        {
-			target = target = PC_FPSController.Instance.gameObject;
+		if (LevelController.Instance.levelPlayState == LevelController.enLevelPlayState.PLAYING)	//Only do stuff while we're actually "playing the game"
+		{
+			if (displayedAngle < 100f)	//Don't play sounds if we're in a situation where we could be phased out
+			{
+				checkMakeSound();
+				playFootfallSound();
+			}
+			//We need to check that our targets are valid before running through with this commandset
+			if (target == null)
+			{
+				target = target = PC_FPSController.Instance.gameObject;
+			}
+			DoUpdate();
 		}
-		DoUpdate();
 	}
 
+	public float displayedAngle = 0;
+	public bool bNeedsDropped = false;
 	public virtual void DoUpdate() {
-		//Debug.Log(Vector3.Dot(PC_FPSController.Instance.gameObject.transform.forward, Vector3.Normalize(gameObject.transform.position - PC_FPSController.Instance.gameObject.transform.position)));
+		//Debug.Log("VA: " + Vector3.Dot(PC_FPSController.Instance.gameObject.transform.forward, Vector3.Normalize(gameObject.transform.position - PC_FPSController.Instance.gameObject.transform.position)));
+		float dotDir = Vector3.Dot(PC_FPSController.Instance.gameObject.transform.forward, Vector3.Normalize(gameObject.transform.position - PC_FPSController.Instance.gameObject.transform.position));
+		float angleDir = (Vector3.Angle(PC_FPSController.Instance.gameObject.transform.forward, Vector3.Normalize(gameObject.transform.position - PC_FPSController.Instance.gameObject.transform.position)));
+		displayedAngle = angleDir;
 		//Check to see if we're behind the player. It's important that this doesn't get avoided
 		//Also see if we're playing audio and complete it as necessary
-		if (!ourAudio.isPlaying && Vector3.Dot(PC_FPSController.Instance.gameObject.transform.forward, Vector3.Normalize(gameObject.transform.position - PC_FPSController.Instance.gameObject.transform.position)) < -0.5f)
+		//Debug.Log(Vector3.Dot(PC_FPSController.Instance.gameObject.transform.forward, PC_FPSController.Instance.gameObject.transform.InverseTransformPoint(gameObject.transform.position).normalized));
+		//Debug.Log(Vector3.Dot(PC_FPSController.Instance.gameObject.transform.forward, PC_FPSController.Instance.gameObject.transform.InverseTransformPoint(gameObject.transform.position).normalized));
+		if (angleDir > 100f && (!ourAudio.isPlaying || Vector3.SqrMagnitude(PC_FPSController.Instance.gameObject.transform.position - gameObject.transform.position) > 30*30))
 		{
 			//Debug.Log("Behind Player");
 			ReDropEnemy();
-		}
-
+			bNeedsDropped = true;
+		} else
+        {
+			bNeedsDropped = false;
+        }
 		DoGravity();
 
 		//Calculate the player details to hand through to the movement systems
@@ -260,7 +276,7 @@ public class EnemyBehavior : MonoBehaviour {
 			dropPoint = LevelController.Instance.GetEnemyDropPoint();
 			if (dropPoint == Vector3.zero)  //We failed
 			{
-				//Debug.Log("redrop failed");
+				Debug.Log("redrop failed");
 				redropTime = Time.time + 3f;    //Give this a rest until later
 			}
 			else
