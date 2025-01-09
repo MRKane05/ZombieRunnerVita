@@ -12428,6 +12428,11 @@ Prefab:
       propertyPath: m_RootOrder
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 114933867291348648, guid: 8189b1297cfa4e844b9e7c037a46ca72,
+        type: 2}
+      propertyPath: RunDetails.bRunMapForward
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8189b1297cfa4e844b9e7c037a46ca72, type: 2}
   m_IsPrefabAsset: 0

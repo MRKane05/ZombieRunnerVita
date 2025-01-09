@@ -89,11 +89,13 @@ public class LevelController : MonoBehaviour {
 		{
 			Debug.LogError("No PBR file found at: " + PBRPath);
 		}*/
+		bRunForward = GameController.Instance.RunDetails.bRunMapForward;    //Make sure we've grabbed this value right off of the hammer so that we'll know what we're doing here
+
 		ReadArrayFromResourcesBinaryFile();
 
 		setPlayState(enLevelPlayState.START); //Prepare our start functionality stuff
 
-		bRunForward = GameController.Instance.RunDetails.bRunMapForward;	//Make sure we've grabbed this value right off of the hammer so that we'll know what we're doing here
+		
 	}
 
 	public int GetActiveZombieCount()
