@@ -10,6 +10,7 @@ public class UIInteractionSound : MonoBehaviour {
 	public AudioSource ourAudioSource;
 	public AudioClip SelectionChangeSound;
 	public AudioClip ClickButtonSound;
+	public AudioClip DeniedButtonSound;
 	void Awake()
 	{
 		if (instance)
@@ -27,8 +28,19 @@ public class UIInteractionSound : MonoBehaviour {
 
 	public void PlayClick()
     {
+		if (ourAudioSource)
+		{
+			ourAudioSource.PlayOneShot(ClickButtonSound);
+		}
+	}
 
-    }
+	public void PlayDenied()
+    {
+		if (ourAudioSource)
+		{
+			ourAudioSource.PlayOneShot(DeniedButtonSound);
+		}
+	}
 
 	public void PlaySelect()
     {

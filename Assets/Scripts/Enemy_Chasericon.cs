@@ -29,8 +29,13 @@ public class Enemy_Chasericon : MonoBehaviour {
 	
 	// Update is called once per frame
 	void LateUpdate () {
+		UpdateIconPosition();
+	}
+
+	public void UpdateIconPosition()
+    {
 		if (parentEnemy)
-        {
+		{
 			Vector3 widgetLocation = parentEnemy.GetWidgetPosition();
 			//Interesting that they're both inverted
 			ourRect.anchoredPosition = new Vector2(-widgetLocation.x * positionSize.x, -widgetLocation.y * positionSize.y);
@@ -38,10 +43,11 @@ public class Enemy_Chasericon : MonoBehaviour {
 			float closeFrac = fadeCurve.Evaluate(1f - Mathf.Clamp01(widgetLocation.z / fadeDistance));
 			ourRect.sizeDelta = Vector2.one * maxSize * closeFrac;
 			if (widgetLocation.z < strikeDistance)
-            {
+			{
 				ourImage.color = Color_DoingStrike;
-            } else
-            {
+			}
+			else
+			{
 				ourImage.color = Color.Lerp(Color_Standard, Color_StrikingDistance, closeFrac);
 			}
 		}

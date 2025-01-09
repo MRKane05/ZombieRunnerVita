@@ -11,6 +11,7 @@ public class PlayerHUDHandler : MonoBehaviour {
 	public DamageIndicatorHandler damageIndicator; //Really this should go through a UI handler, but for the moment...
 	public Image healthBar;
 	public GameObject ChaserIndicatorsBase;
+	public GameObject DeadScreen;
 	RectTransform ourRect;
 	void Awake()
 	{
@@ -58,4 +59,9 @@ public class PlayerHUDHandler : MonoBehaviour {
 		return newIndicator;
     }
     #endregion
+
+	public void SetDeadScreen(bool bThisState)
+    {
+		DeadScreen.SetActive(bThisState);
+    }
 }

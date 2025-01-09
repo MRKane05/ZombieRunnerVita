@@ -19,6 +19,10 @@ public class UI_ToggleButton : UIButtonFunction {
 
     public virtual void toggleSelectState()
     {
+        if (UIInteractionSound.Instance)
+        {
+            UIInteractionSound.Instance.PlayClick();
+        }
         bIsSelected = !bIsSelected;
         setSelectImage();
     }

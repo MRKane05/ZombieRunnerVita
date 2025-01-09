@@ -267,7 +267,7 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_Sprite: {fileID: 0}
+  m_Sprite: {fileID: 21300000, guid: 8327ac79c6faa584a92d31806c5866b6, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -353,10 +353,14 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_text: 'This could be put into the shop menu, but for a moment the idea is that
-    this menu will allow you to sort out what you''re carrying and potentially drop
-    any packages that are just chewing up excess weight. The catch is: you''ve already
-    purcased them so won''t get your money back if you do this.'
+  m_text: 'The idea is that this menu will allow you to sort out what you''re carrying
+    and potentially drop any packages that are just chewing up excess weight. The
+    catch is: you''ve already purcased them so won''t get your money back if you do
+    this.
+
+
+    For the moment I''ve simplified the game by making it so that all packages can
+    be delivered anywhere.'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -424,12 +428,12 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_textInfo:
     textComponent: {fileID: 710215147}
-    characterCount: 291
+    characterCount: 338
     spriteCount: 0
-    spaceCount: 55
-    wordCount: 56
+    spaceCount: 62
+    wordCount: 62
     linkCount: 0
-    lineCount: 4
+    lineCount: 7
     pageCount: 1
     materialCount: 1
   m_havePropertiesChanged: 0
@@ -717,7 +721,7 @@ GameObject:
   - component: {fileID: 1021443854}
   - component: {fileID: 1021443853}
   m_Layer: 0
-  m_Name: Image
+  m_Name: PackItemsArea
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

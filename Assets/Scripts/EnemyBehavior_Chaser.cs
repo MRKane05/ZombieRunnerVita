@@ -20,6 +20,8 @@ public class EnemyBehavior_Chaser : EnemyBehavior {
 
 	GameObject ourChaserIcon;
 
+	Range DistractionOdds = new Range(0.25f, 0.75f);	//What are the odds that we'll be distracted by a decoy
+
 	void Start()
 	{
 		characterController = gameObject.GetComponent<CharacterController>();
@@ -31,10 +33,19 @@ public class EnemyBehavior_Chaser : EnemyBehavior {
 		//We need to add our tracking marker to the HUD
 		ourChaserIcon = PlayerHUDHandler.Instance.AddIndicatorIcon(ChaserIndicatorPrefab);
 		Enemy_Chasericon newChaser = ourChaserIcon.GetComponent<Enemy_Chasericon>();
+		
 		newChaser.parentEnemy = this;
 		ourAudio = gameObject.GetComponent<AudioSource>();
 		groanPitch = GroanPitchRange.GetRandom();
 	}
+
+	public void SetChaserIcon(bool bState)
+    {
+		if (ourChaserIcon)
+		{
+			ourChaserIcon.SetActive(bState);
+		}
+    }
 
 	void PickRunState()
     {
@@ -91,6 +102,17 @@ public class EnemyBehavior_Chaser : EnemyBehavior {
 
 	public override void DoUpdate()
 	{
+		//We need to check that our targets are valid before running through with this commandset
+		if (target == null)
+		{
+			//Technically we've come away from a distraction, so we should see if we need to be disabled (as in we've forgotten about the player)
+			if (Random.value > DistractionOdds.GetRandom() || true)
+			{
+				LevelController.Instance.ChaserGotDistracted(gameObject);
+			}
+			target = target = PC_FPSController.Instance.gameObject;
+		}
+
 		//Calculate the player details to hand through to the movement systems
 		Vector3 forward = transform.TransformDirection(Vector3.forward);
 		Vector3 right = transform.TransformDirection(Vector3.right);
@@ -137,5 +159,4 @@ public class EnemyBehavior_Chaser : EnemyBehavior {
 		//PickZombieStartingState();
 		PickRunState();	//Chaser zombies have only one state, and that's ON
 	}
-
 }

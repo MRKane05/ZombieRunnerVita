@@ -11,6 +11,8 @@ public class MasterAudioBank : MonoBehaviour {
 
 	public List<AudioClip> Footfall_Pavement = new List<AudioClip>();
 	public List<AudioClip> Footfall_Metal = new List<AudioClip>();
+	public List<AudioClip> PlayerHit = new List<AudioClip>();
+
 	void Awake()
 	{
 		if (instance)
@@ -24,6 +26,11 @@ public class MasterAudioBank : MonoBehaviour {
 			instance = this;
 		}
 	}
+
+	public AudioClip GetRandomPlayerHitSound()
+    {
+		return (PlayerHit[Random.Range(0, PlayerHit.Count)]);
+	}
 	public AudioClip GetRandomFootfallSound(enFootfallSubstrate footfallSubstrate)
     {
 		switch (footfallSubstrate)
@@ -32,13 +39,13 @@ public class MasterAudioBank : MonoBehaviour {
 				//Whoops!
 				break;
 			case enFootfallSubstrate.PAVEMENT:
-				return (Footfall_Pavement[Random.Range(0, Footfall_Pavement.Count-1)]);
+				return (Footfall_Pavement[Random.Range(0, Footfall_Pavement.Count)]);
 				break;
 			case enFootfallSubstrate.METAL:
-				return (Footfall_Metal[Random.Range(0, Footfall_Metal.Count-1)]);
+				return (Footfall_Metal[Random.Range(0, Footfall_Metal.Count)]);
 				break;
 			default:
-				return (Footfall_Pavement[Random.Range(0, Footfall_Pavement.Count-1)]);
+				return (Footfall_Pavement[Random.Range(0, Footfall_Pavement.Count)]);
 				break;
 
 		}

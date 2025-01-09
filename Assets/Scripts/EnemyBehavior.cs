@@ -127,11 +127,7 @@ public class EnemyBehavior : MonoBehaviour {
 				checkMakeSound();
 				playFootfallSound();
 			}
-			//We need to check that our targets are valid before running through with this commandset
-			if (target == null)
-			{
-				target = target = PC_FPSController.Instance.gameObject;
-			}
+
 			DoUpdate();
 		}
 	}
@@ -139,6 +135,13 @@ public class EnemyBehavior : MonoBehaviour {
 	public float displayedAngle = 0;
 	public bool bNeedsDropped = false;
 	public virtual void DoUpdate() {
+		//We need to check that our targets are valid before running through with this commandset
+		if (target == null)
+		{
+			target = target = PC_FPSController.Instance.gameObject;
+		}
+
+
 		//Debug.Log("VA: " + Vector3.Dot(PC_FPSController.Instance.gameObject.transform.forward, Vector3.Normalize(gameObject.transform.position - PC_FPSController.Instance.gameObject.transform.position)));
 		float dotDir = Vector3.Dot(PC_FPSController.Instance.gameObject.transform.forward, Vector3.Normalize(gameObject.transform.position - PC_FPSController.Instance.gameObject.transform.position));
 		float angleDir = (Vector3.Angle(PC_FPSController.Instance.gameObject.transform.forward, Vector3.Normalize(gameObject.transform.position - PC_FPSController.Instance.gameObject.transform.position)));
@@ -242,6 +245,7 @@ public class EnemyBehavior : MonoBehaviour {
 			if (playerController)
 			{
 				//We can strike this player
+				bHasStruckPlayer = true;
 				HitPlayer();	//Handles our animation
 				playerController.EnemyHitPlayer(gameObject, false);
 			}

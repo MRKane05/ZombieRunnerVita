@@ -302,8 +302,12 @@ MonoBehaviour:
     description: A small shopping area previously defined this center
     referenceObject: {fileID: 95684698}
     avaliableRuns:
-    - {fileID: 73935911}
-    - {fileID: 1929196385}
+    - markerTarget: {fileID: 73935911}
+      runLevelName: Run_BasicRunA
+      bDoRunForward: 1
+    - markerTarget: {fileID: 1929196385}
+      runLevelName: Run_BasicRunA
+      bDoRunForward: 0
     townHealth: 33
     avaliablePackages: []
   - locationName: Tainui
@@ -311,16 +315,24 @@ MonoBehaviour:
       use to live
     referenceObject: {fileID: 73935911}
     avaliableRuns:
-    - {fileID: 95684698}
-    - {fileID: 1929196385}
+    - markerTarget: {fileID: 1929196385}
+      runLevelName: Run_BasicRunA
+      bDoRunForward: 0
+    - markerTarget: {fileID: 95684698}
+      runLevelName: Run_BasicRunA
+      bDoRunForward: 1
     townHealth: 33
     avaliablePackages: []
   - locationName: Waverleigh
     description: Left to the side this stronghold is doing its best to survive
     referenceObject: {fileID: 1929196385}
     avaliableRuns:
-    - {fileID: 73935911}
-    - {fileID: 95684698}
+    - markerTarget: {fileID: 73935911}
+      runLevelName: Run_BasicRunA
+      bDoRunForward: 1
+    - markerTarget: {fileID: 95684698}
+      runLevelName: Run_BasicRunA
+      bDoRunForward: 1
     townHealth: 33
     avaliablePackages: []
   packageTypes:
@@ -2205,14 +2217,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.3013083, g: 0.5754717, b: 0.43839, a: 1}
+  m_Color: {r: 0.9716981, g: 0.9322868, b: 0.79294235, a: 1}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_Sprite: {fileID: 0}
+  m_Sprite: {fileID: 21300000, guid: 34edf4459bae17c46ba199b12e809392, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1

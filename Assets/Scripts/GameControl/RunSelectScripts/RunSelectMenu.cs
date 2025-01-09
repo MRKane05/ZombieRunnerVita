@@ -56,7 +56,7 @@ public class RunSelectMenu : MonoBehaviour {
 	UI_LocationDetailsMenuHandler ourDetailsPanel;
 	// Use this for initialization
 	void Start () {
-		SelectRunLocation();
+		StartCoroutine(SelectRunLocation());
 		ourDetailsPanel = gameObject.GetComponentInChildren<UI_LocationDetailsMenuHandler>();
 
 		//Do our necessary setup
@@ -68,7 +68,7 @@ public class RunSelectMenu : MonoBehaviour {
 		}
 	}
 
-	public void SelectRunLocation()
+	IEnumerator SelectRunLocation()
 	{
 		//Kick off by finding out where we are from our game controller
 		if (GameController.Instance && GameController.Instance.RunDetails.startLocation.Length > 3)
@@ -86,6 +86,7 @@ public class RunSelectMenu : MonoBehaviour {
 						if (!bPickedStart)
                         {
 							bPickedStart = true;
+							yield return null;
 							UIHelpers.SetSelectedButton(linkedTown.markerTarget);
                         }
                     }

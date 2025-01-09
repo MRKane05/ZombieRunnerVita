@@ -34,7 +34,7 @@ public class LevelController : MonoBehaviour {
 	private static LevelController instance = null;
 	public static LevelController Instance { get { return instance; } }
 
-	public enum enLevelPlayState { NULL, START, STARTPLAY, PLAYING, ENDED, PAUSED }
+	public enum enLevelPlayState { NULL, START, STARTPLAY, PLAYING, ENDED, PAUSED, DIED }
 	public enLevelPlayState levelPlayState = enLevelPlayState.START;
 	[Header("Level Setup Details")]
 	public PathCreator pathCreatorReference;
@@ -196,12 +196,44 @@ public class LevelController : MonoBehaviour {
 			SpawnedZombies.Add(newLevelZombie);
         }
 
+		PlaceStartingZombies();
+    }
+
+	public void PlaceStartingZombies()
+    {
 		//Spawn the zombies that'll be standing around
-		for (int i=0; i<startingZombies; i++)
-        {
+		for (int i = 0; i < startingZombies; i++)
+		{
 			StartCoroutine(DelayPlaceZombie(StartZombieDelays.GetRandom(), SpawnedZombies[i]));
+		}
+	}
+
+	public void DisableChasers()
+    {
+		foreach (LevelZombie thisZombie in SpawnedChasers)
+        {
+			DisableChaser(thisZombie);
         }
     }
+
+	public void ChaserGotDistracted(GameObject thisChaser)
+    {
+		foreach (LevelZombie thisZombie in SpawnedChasers)
+        {
+			if (thisZombie.Zombie == thisChaser)
+            {
+				Debug.Log("Chaser got Distracted");
+				DisableChaser(thisZombie);
+            }
+        }
+    }
+
+	void DisableChaser(LevelZombie thisChaser)
+    {
+		thisChaser.ZombieState = LevelZombie.enZombieState.DISABLED;
+		//We'll need to tell our zombie that we've got to turn of our UI and this zombie
+		thisChaser.Zombie.GetComponent<EnemyBehavior_Chaser>().SetChaserIcon(false);	//Of course we could just restart the level...
+	}
 
 	IEnumerator DelayPlaceChaser(float spawnDelay, Vector3 dropPoint)
     {
@@ -230,6 +262,8 @@ public class LevelController : MonoBehaviour {
 			//Set things in action
             thisZombie.SetActive(true);
 			thisZombie.Zombie.GetComponent<EnemyBehavior>().RespawnEnemy(dropPoint);
+
+			thisZombie.Zombie.GetComponent<EnemyBehavior_Chaser>().SetChaserIcon(true);
 		}
     }
 
@@ -299,6 +333,8 @@ public class LevelController : MonoBehaviour {
 	//Public because we might need to call this remotely
 	public void setPlayerPosition()
     {
+		PC_FPSController.Instance.bPlayerDead = false;  //Make sure that our player is alive
+		PC_FPSController.Instance.health = 100; //Make sure that we're at full health
 		Debug.Log("Setting player start position");
 		if (bRunForward)
         {
@@ -342,6 +378,9 @@ public class LevelController : MonoBehaviour {
 				//There will be a pause menu! It'll be legendary!
 				setTimescale(1f);
 				break;
+			case enLevelPlayState.DIED:
+				PlayerHUDHandler.Instance.SetDeadScreen(true);
+				break;
 			default:
 				break;
         }
@@ -364,7 +403,27 @@ public class LevelController : MonoBehaviour {
         {
 			Debug.LogError("No zombie propensity texture assigned to this level!!!");
         }
-    }
+
+		switch (levelPlayState)
+		{
+			case enLevelPlayState.DIED:
+				//PlayerHUDHandler.Instance.SetDeadScreen(true);
+				//See if we want to respawn our player
+				if (Input.GetButtonDown("Cross") || Input.GetKey(KeyCode.Return))
+                {
+					setPlayerPosition(); //Otherwise our zombies cannot be placed correctly
+					PlaceStartingZombies();
+					DisableChasers();
+					PC_FPSController.Instance.SetupRunStarts();
+					PlayerHUDHandler.Instance.SetDeadScreen(false);
+					setPlayState(enLevelPlayState.START);
+				}
+				break;
+			default:
+				break;
+		}
+
+	}
 
     #region Level Generation Functions
     //This should be a universal function somewhere as it's used in two different places
@@ -692,7 +751,7 @@ public class LevelController : MonoBehaviour {
             {
 				if (Random.value < effectiveness)	//Distract this enemy
                 {
-					Debug.Log("Enemy Distracted");
+					//Debug.Log("Enemy Distracted");
 					thisZombie.Zombie.GetComponent<EnemyBehavior>().setTarget(distraction);
                 }
             }
@@ -704,11 +763,16 @@ public class LevelController : MonoBehaviour {
 			{
 				if (Random.value < effectiveness)   //Distract this enemy
 				{
-					Debug.Log("Chaser Distracted");
+					//Debug.Log("Chaser Distracted");
 					thisZombie.Zombie.GetComponent<EnemyBehavior>().setTarget(distraction);
 				}
 			}
 		}
 	}
     #endregion
+
+	public void PlayerDied()
+    {
+		setPlayState(enLevelPlayState.DIED);
+	}
 }

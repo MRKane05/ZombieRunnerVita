@@ -99,6 +99,8 @@ namespace PathCreation {
                                     break;
                                 }
                             }
+                            float partT = (float)i / (float)path.NumPoints;
+                            Gizmos.color = Color.Lerp(globalEditorDisplaySettings.bezierPath, globalEditorDisplaySettings.bezierPathEnd, partT);
                             Gizmos.DrawLine (path.GetPoint (i), path.GetPoint (nextI));
                         }
                     }

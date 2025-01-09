@@ -23,7 +23,7 @@ public class UI_SelectablePackage : UI_ToggleButton {
         ourPackageHandler = newPackageHandler;
 
         targetPackage = newTargetPackage;
-        itemName.text = targetPackage.townName;
+        itemName.text = "Any"; // targetPackage.townName;
         itemType.text = targetPackage.packageType;
         itemValue = targetPackage.value;
         itemWeight = targetPackage.weight;
@@ -40,7 +40,17 @@ public class UI_SelectablePackage : UI_ToggleButton {
 
     public override void toggleSelectState()
     {
+        //We need to check and see if we _can_ toggle this
+        if (!bIsSelected && ourPackageHandler.totalValue + itemValue > GameController.Instance.playerInfo.avaliableCash || ourPackageHandler.totalWeight + itemWeight > GameController.Instance.playerInfo.avaliableWeight)
+        {
+            if (UIInteractionSound.Instance)
+            {
+                UIInteractionSound.Instance.PlayDenied();
+            }
+            return; //we really need to play a sound or something here
+        }
         base.toggleSelectState(); //call our super, but we also need to pass through the information to our panel handler to keep an eye on the tickers
+        
         if (bIsSelected)
         {
             ourPackageHandler.SetPanelSelected(itemValue, itemWeight);

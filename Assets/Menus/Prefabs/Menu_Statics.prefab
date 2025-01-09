@@ -166,7 +166,8 @@ MonoBehaviour:
   ourAudioSource: {fileID: 0}
   SelectionChangeSound: {fileID: 8300000, guid: cf07f42e05afc6441b6680d393c3a42f,
     type: 3}
-  ClickButtonSound: {fileID: 0}
+  ClickButtonSound: {fileID: 8300000, guid: 03493d5edfd745b4ba8c25674138f3da, type: 3}
+  DeniedButtonSound: {fileID: 8300000, guid: 8dcf33c21fca6914ab6aca6016dc9f15, type: 3}
 --- !u!114 &114287928810484746
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -224,6 +225,13 @@ MonoBehaviour:
   - {fileID: 8300000, guid: f63c41ca4d727c749a9394e9d913782e, type: 3}
   - {fileID: 8300000, guid: e7dd071d1bca0d34e8643deadc4e53a5, type: 3}
   - {fileID: 8300000, guid: 4bf386c7fddad694198ee77c8bc9a6db, type: 3}
+  PlayerHit:
+  - {fileID: 8300000, guid: 1bb8cec73a000a54580ab957f96b162b, type: 3}
+  - {fileID: 8300000, guid: 6632b34c49313ed48b9dd4ab06d2d185, type: 3}
+  - {fileID: 8300000, guid: 509925514ef77b24a8f08f92da3830e8, type: 3}
+  - {fileID: 8300000, guid: ac42a01b8a4ebf949a98df416d3d384d, type: 3}
+  - {fileID: 8300000, guid: 16b8b1c5ce85ead488d390a0d8e2d5dc, type: 3}
+  - {fileID: 8300000, guid: 4c6f577b94eca684f83e679f948fe040, type: 3}
 --- !u!114 &114933867291348648
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -243,5 +251,7 @@ MonoBehaviour:
     endLocation: 
     startLocation: Musselbrough
     carriedPackages: []
+    targetMap: 
+    bRunMapForward: 1
   avaliablePackages: []
   carriedPackages: []

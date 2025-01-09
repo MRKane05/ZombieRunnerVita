@@ -27,7 +27,7 @@ public class UILevelCompleteHandler : MonoBehaviour {
 		//We'll need some clever multiplier for our packages, for the moment lets just use a random value from 1.5 to 2
 		foreach (townPackage thisPackage in GameController.Instance.carriedPackages)
         {
-			if (thisPackage.townName == GameController.Instance.RunDetails.endLocation)
+			if (thisPackage.townName == GameController.Instance.RunDetails.endLocation || true)	//PROBLEM: Hack to allow all packages to be delivered to any town
             {
 				packagesTotal += thisPackage.value * Random.RandomRange(1.5f, 2.0f);
 				deliveredPackages++;

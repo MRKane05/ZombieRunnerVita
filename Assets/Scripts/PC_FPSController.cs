@@ -20,9 +20,9 @@ public class PC_FPSController : MonoBehaviour
     [Space]
     [Header("HUD Settings")]
     public Image FollowIndicator; //Terrible form here too...
-    public GameObject DeadIndicator;
+    //public GameObject DeadIndicator;
 
-    public float PlayerLeadTime = 3f;
+    //public float PlayerLeadTime = 3f;
 
     bool bClimbing = false;
     float player_Stamina = 100f;
@@ -146,7 +146,7 @@ public class PC_FPSController : MonoBehaviour
     float lastHitTime = 0;
     float healthCooldownTime = 3f;
     float healthRecovery = 20f;
-    bool bPlayerDead = false;
+    public bool bPlayerDead = false;
     public bool bPlayerInvincible = false;
 
     //Details that are used to calculate where we are along our path:
@@ -216,7 +216,12 @@ public class PC_FPSController : MonoBehaviour
         {
             pathCreator = LevelController.Instance.pathCreator_Reverse; //Set this so that the player doesn't always have to be setup
         }*/
-         
+
+        SetupRunStarts();
+    }
+
+    public void SetupRunStarts()
+    {
         bestTime = pathCreator.path.GetClosestTimeOnPath(gameObject.transform.position);  //This is actually well optimised...
         bestDistance = pathCreator.path.GetClosestDistanceAlongPath(gameObject.transform.position);
 
@@ -454,15 +459,16 @@ public class PC_FPSController : MonoBehaviour
 
         //We need to check our speed and adjust our leadTime accordingly
         //PROBLEM: This lead timer doesn't take into account actual movement, and any cool stuff we might be doing with Parkour
-        PlayerLeadTime += (curSpeedX - (slowSpeed + runningSpeed) * 0.5f) * Time.deltaTime;  //The crazy lazy way
+        //PlayerLeadTime += (curSpeedX - (slowSpeed + runningSpeed) * 0.5f) * Time.deltaTime;  //The crazy lazy way
         
-        
+        /*
         if (PlayerLeadTime <= 0 && !bPlayerInvincible) {
             DeadIndicator.SetActive(true);
             bPlayerDead = true; //Kill our player
         }
+        */
 
-        PlayerLeadTime = Mathf.Clamp(PlayerLeadTime, 0, 5); //So we can't get too much of a lead!
+        //PlayerLeadTime = Mathf.Clamp(PlayerLeadTime, 0, 5); //So we can't get too much of a lead!
 
 
         //PROBLEM: Should clamp the side momentium so that we can't do insaine move speeds. Or just leave it as it is
@@ -697,11 +703,12 @@ public class PC_FPSController : MonoBehaviour
         {
             doBoostTrigger();
         }
-
+        //This really needs to be moved to the LevelController
+        /*
         if (bPlayerDead) {
-            if (Input.GetKey(KeyCode.Return) || Input.GetButton("Circle")) {
+            if (Input.GetKey(KeyCode.Return) || Input.GetButton("Cross")) {
                 bPlayerDead = false;
-                DeadIndicator.SetActive(false);
+                //DeadIndicator.SetActive(false);
                 //Respawn our player
                 gameObject.transform.position = StartPosition;
                 priorPosition = StartPosition;
@@ -709,9 +716,9 @@ public class PC_FPSController : MonoBehaviour
                 bestTime = pathCreator.path.GetClosestTimeOnPath(gameObject.transform.position);  //This is actually well optimised...
                 bestDistance = pathCreator.path.GetClosestDistanceAlongPath(gameObject.transform.position);
 
-                PlayerLeadTime = 3f;
+                //PlayerLeadTime = 3f;
             }
-        }
+        }*/
 
         //Housekeeping
         //Because our character body keeps drifting with animations...
@@ -792,6 +799,7 @@ public class PC_FPSController : MonoBehaviour
                 float damage = UnityEngine.Random.Range(10f, 20f);
                 health -= damage;
                 PlayerHUDHandler.Instance.takeDamage(new Vector2(XAngle, YAngle), damage);
+                ourAudio.PlayOneShot(MasterAudioBank.Instance.GetRandomPlayerHitSound());
                 //Our hit reaction
                 setCameraOffset(newTargetAngle);
 
@@ -810,11 +818,19 @@ public class PC_FPSController : MonoBehaviour
             float damage = UnityEngine.Random.Range(20f, 40f);
             health -= damage;
             PlayerHUDHandler.Instance.takeDamage(new Vector2(XAngle, YAngle), damage);
+            ourAudio.PlayOneShot(MasterAudioBank.Instance.GetRandomPlayerHitSound());
             //Our hit reaction
             setCameraOffset(newTargetAngle);
         }
         lastHitTime = Time.time;
         
+        //Check our health and see if we've been killed
+        if (health < 0)
+        {
+            bPlayerDead = true;
+            LevelController.Instance.PlayerDied();
+        }
+
         //setCurrentAnimation("Hit_Guard");
     }
 

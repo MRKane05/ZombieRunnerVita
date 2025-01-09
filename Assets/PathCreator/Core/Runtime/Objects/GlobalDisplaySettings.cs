@@ -38,6 +38,7 @@ namespace PathCreation
 
         [Header("Bezier Path Colours")]
         public Color bezierPath = Color.green;
+        public Color bezierPathEnd = Color.red;
         public Color highlightedPath = new Color(1, 0.6f, 0);
         public Color bounds = new Color(1, 1, 1, .4f);
         public Color segmentBounds = new Color(1, 1, 1, .4f);
