@@ -365,6 +365,7 @@ public class LevelController : MonoBehaviour {
 			case enLevelPlayState.STARTPLAY:    //Everything we need to do when we start the level running
 												//We need to set our player position to start the run
 				levelPlayState = enLevelPlayState.PLAYING; //Set our start correctly after our initial tick
+				
 				break;
 			case enLevelPlayState.PLAYING:
 				//Will need to clear any UI and other bits and bobbs
@@ -396,7 +397,8 @@ public class LevelController : MonoBehaviour {
 		SpawnLevelZombies();
 		SpawnChaserZombies();
 		levelPlayState = enLevelPlayState.PLAYING;
-    }
+		UIMusicHandler.Instance.SetMusicTrack(false);
+	}
 	#endregion
 
 	void Update()

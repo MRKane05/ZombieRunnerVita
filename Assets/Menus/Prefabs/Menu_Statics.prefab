@@ -20,12 +20,14 @@ GameObject:
   m_Component:
   - component: {fileID: 4535476402263672}
   - component: {fileID: 114270090494561280}
+  - component: {fileID: 82630061386512392}
   - component: {fileID: 114332440733866936}
   - component: {fileID: 114287928810484746}
   - component: {fileID: 114086744085879358}
-  - component: {fileID: 82630061386512392}
   - component: {fileID: 114933867291348648}
   - component: {fileID: 114875597839462154}
+  - component: {fileID: 114359285239649480}
+  - component: {fileID: 82675404444439348}
   m_Layer: 0
   m_Name: Menu_Statics
   m_TagString: Untagged
@@ -66,13 +68,67 @@ AudioSource:
   Priority: 128
   DopplerLevel: 1
   MinDistance: 1
-  MaxDistance: 500
+  MaxDistance: 5000
   Pan2D: 0
-  rolloffMode: 0
+  rolloffMode: 2
   BypassEffects: 0
   BypassListenerEffects: 0
   BypassReverbZones: 0
   rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0.0002
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 0.9975891
+      value: 0.99676514
+      inSlope: -0.02339102
+      outSlope: -0.02339102
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.6102936
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
     serializedVersion: 2
     m_Curve:
     - serializedVersion: 3
@@ -84,15 +140,56 @@ AudioSource:
       weightedMode: 0
       inWeight: 0.33333334
       outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+--- !u!82 &82675404444439348
+AudioSource:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1545490400510770}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 8300000, guid: fe2ec73819357314eb07c935ccb7264a, type: 3}
+  m_PlayOnAwake: 1
+  m_Volume: 0.25
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 50000
+  Pan2D: 0
+  rolloffMode: 2
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
     - serializedVersion: 3
-      time: 1
-      value: 0
+      time: 0.00002
+      value: 1
       inSlope: 0
       outSlope: 0
       tangentMode: 0
       weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 0.99676514
+      inSlope: -0.029767621
+      outSlope: -0.029767621
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.23913522
+      outWeight: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
@@ -163,7 +260,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 14e43089c0f5afe4da19ec3698618271, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ourAudioSource: {fileID: 0}
+  ourAudioSource: {fileID: 82630061386512392}
   SelectionChangeSound: {fileID: 8300000, guid: cf07f42e05afc6441b6680d393c3a42f,
     type: 3}
   ClickButtonSound: {fileID: 8300000, guid: 03493d5edfd745b4ba8c25674138f3da, type: 3}
@@ -197,6 +294,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   loadedScenes: []
   baseMenu: {fileID: 0}
+--- !u!114 &114359285239649480
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1545490400510770}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8042c244319f7e145a666f7518385d0f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ourAudioSource: {fileID: 82675404444439348}
+  menuTheme: {fileID: 8300000, guid: fe2ec73819357314eb07c935ccb7264a, type: 3}
+  runTheme: {fileID: 8300000, guid: 0dc652900a6735145952bdbbc02dbdc1, type: 3}
 --- !u!114 &114875597839462154
 MonoBehaviour:
   m_ObjectHideFlags: 1

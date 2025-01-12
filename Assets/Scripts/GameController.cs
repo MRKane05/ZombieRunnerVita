@@ -99,6 +99,7 @@ public class GameController : MonoBehaviour {
 		//Now that that's updated lets move to loading our scene
 		SceneManager.LoadScene("StrongholdScene", LoadSceneMode.Single);
 		//We need a callback that tells this scene that we've just arrived after doing a run. Or something to that extent.
+		UIMusicHandler.Instance.SetMusicTrack(true);
 	}
 
 	public void SetAvaliablePackages(List<townPackage> newPackages)
